@@ -1,4 +1,5 @@
 <script setup lang="ts">
+// 导入vue基础
 import { h, ref, onMounted } from "vue";
 import { useRouter } from "vue-router";
 const router = useRouter();
@@ -13,7 +14,6 @@ const collapsed = ref(true);
 
 // 主题
 import { lightTheme, darkTheme } from "../../utils/gloable";
-import { setup } from "naive-ui/es/radio/src/use-radio";
 const active = ref(false);
 const theme = ref(lightTheme);
 const onUpdateTheme = (value: boolean) => {
@@ -206,6 +206,7 @@ function expandIcon() {
   return h(NIcon, null, { default: () => h(CaretDownOutline) });
 }
 
+// 侧边栏旋转功能
 onMounted(() => {
   const leftsider = document.querySelector<HTMLDivElement>(".left-sider");
 
@@ -218,7 +219,7 @@ onMounted(() => {
     const tiY = (y - 0.5) * 25;
     // 添加可选链操作符，确保类型安全
     leftsider.style.transform = `rotateX(${
-      tiY > 0 ? tiX : -tiX
+      tiY < 0 ? -tiX : tiX
     }deg) rotateY(${tiY}deg)`;
   });
   // 鼠标离开时重置旋转角度
@@ -250,15 +251,22 @@ onMounted(() => {
             @expand="collapsed = false"
             class="left-sider"
           >
-            <n-menu
-              :collapsed="collapsed"
-              :collapsed-width="64"
-              :collapsed-icon-size="22"
-              :options="menuOptions"
-              :render-label="renderMenuLabel"
-              :render-icon="renderMenuIcon"
-              :expand-icon="expandIcon"
-            />
+            <n-layout style="background-color: transparent">
+              <n-layout-content
+                style="height: 650px; background-color: transparent"
+                :native-scrollbar="false"
+              >
+                <n-menu
+                  :collapsed="collapsed"
+                  :collapsed-width="64"
+                  :collapsed-icon-size="22"
+                  :options="menuOptions"
+                  :render-label="renderMenuLabel"
+                  :render-icon="renderMenuIcon"
+                  :expand-icon="expandIcon"
+                />
+              </n-layout-content>
+            </n-layout>
             <n-layout-footer
               position="absolute"
               style="background: rgba(0, 0, 0, 0)"
@@ -314,17 +322,16 @@ onMounted(() => {
   position: relative;
   left: -5px;
   transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 2.2);
-  background: rgba(255, 255, 255, 0.08);
+  background: #ffffff14;
   margin: 4px 0;
   border: 5px solid transparent;
-  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.6),
-    0 16px 32px rgba(0, 0, 0, 0.12);
+  box-shadow: 0 0 0 2px #ffffff99, 0 16px 32px #0000001f;
   border-top-right-radius: 21px;
   border-bottom-right-radius: 21px;
   padding-left: 5px;
 }
 
 .right-content {
-  background-color: rgba(255, 255, 255, 0);
+  background-color: #ffffff00;
 }
 </style>

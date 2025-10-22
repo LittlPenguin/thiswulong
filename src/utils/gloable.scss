@@ -1,6 +1,15 @@
-:root{
-    //menu
-    --menu-item-hover-light:#e3e3e3;
-    --menu-item-hover-dark:#a0a0a0;
-    
+:root {
+  //menu light
+  --menu-white-light: #fff;
+  --menu-item-banner-light: #e3e3e3;
+  --menu-item-text-color-light: #2a2a2a;
+  --menu-item-Child-Active-light: #b1abef;
+  --menu-option-child-active-light: #518a8c;
+
+  //menu dark
+  --menu-white-dark: #77888b;
+  --menu-item-banner-dark: #a0a0a0;
+  --menu-item-text-color-dark: #dcdcdc;
+  --menu-item-Child-Active-dark: #efb5ab;
+  --menu-option-child-active-dark: #bcf2f9;
 }
