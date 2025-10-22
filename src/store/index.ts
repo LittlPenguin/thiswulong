@@ -10,3 +10,4 @@ pinia.use(piniaPlugin);
 export default pinia;
 //导出所有模块
 export * from "./modules/LayoutCounter";
+export * from "./modules/userCounter";

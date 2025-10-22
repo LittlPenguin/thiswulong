@@ -1,31 +1,36 @@
 <script setup lang="ts">
 // 导入vue基础
 import { h, ref, onMounted } from "vue";
-import { RouterLink, useRouter } from "vue-router";
+import { useRouter, useRoute } from "vue-router";
 const router = useRouter();
+const route = useRoute();
 
 //ui库默认导入
 import type { MenuOption } from "naive-ui";
-import { BookmarkOutline, CaretDownOutline, Link } from "@vicons/ionicons5";
-import { BrandGithub, Window } from "@vicons/tabler";
+import { BookmarkOutline, CaretDownOutline } from "@vicons/ionicons5";
+import { BrandGithub, BrandGit } from "@vicons/tabler";
 import { NIcon } from "naive-ui";
+
+// 导入store
+import { useLayoutStore, useUserCounter } from "../../store";
+const Layoutstore = useLayoutStore();
+const Userstore = useUserCounter();
+
+//menu数据
+const menuOptions: MenuOption[] = Layoutstore.menuOptions;
 
 // 侧边栏是否折叠
 const collapsed = ref(true);
 
-// 主题
+// 主题模式
 import { lightTheme, darkTheme } from "../../utils/gloable";
-const active = ref(false);
-const theme = ref(lightTheme);
+const active = ref(Userstore.themeActive || false);
+const theme = ref(active.value ? darkTheme : lightTheme);
 const onUpdateTheme = (value: boolean) => {
   theme.value = value ? darkTheme : lightTheme;
   active.value = value;
+  Userstore.SetThemeActive(value);
 };
-
-//数据
-import { useLayoutStore } from "../../store/modules/LayoutCounter";
-const store = useLayoutStore();
-const menuOptions: MenuOption[] = store.menuOptions;
 
 // 路由跳转
 function renderMenuLabel(option: MenuOption) {
@@ -54,7 +59,6 @@ function expandIcon() {
 // 侧边栏旋转功能
 onMounted(() => {
   const leftsider = document.querySelector<HTMLDivElement>(".left-sider");
-
   // 鼠标移动时旋转侧边栏
   leftsider?.addEventListener("mousemove", (e: MouseEvent) => {
     const react = leftsider?.getBoundingClientRect();
@@ -73,9 +77,24 @@ onMounted(() => {
   });
 });
 
-//跳转github
-const goGithub = () => {
-  window.open("https://github.com/LittlPenguin");
+//跳转github或gitee
+const goGithub = (type: string) => {
+  window.open(
+    type === "github"
+      ? "https://github.com/LittlPenguin"
+      : "https://gitee.com/colasheep"
+  );
+};
+
+// 菜单功能
+//配置默认选择项
+const defaultActiveKey = ref();
+if (route.path === "/") {
+  defaultActiveKey.value = "first";
+}
+// 侧边栏菜单选项选择
+const OnMenuChoice = (value: string) => {
+  defaultActiveKey.value = value;
 };
 </script>
 
@@ -114,6 +133,8 @@ const goGithub = () => {
                   :render-label="renderMenuLabel"
                   :render-icon="renderMenuIcon"
                   :expand-icon="expandIcon"
+                  @update:value="OnMenuChoice($event)"
+                  :value="defaultActiveKey"
                 />
               </n-layout-content>
             </n-layout>
@@ -130,7 +151,19 @@ const goGithub = () => {
                   v-show="!collapsed"
                   :bordered="false"
                   circle
-                  @click="goGithub()"
+                  @click="goGithub('gitee')"
+                >
+                  <template #icon>
+                    <NIcon>
+                      <BrandGit />
+                    </NIcon>
+                  </template>
+                </n-button>
+                <n-button
+                  v-show="!collapsed"
+                  :bordered="false"
+                  circle
+                  @click="goGithub('github')"
                 >
                   <template #icon>
                     <NIcon>
@@ -173,18 +206,6 @@ const goGithub = () => {
   background-size: cover;
   background-attachment: fixed;
 }
-// .left-sider {
-// background-color: rgba(255, 255, 255, 0.35);
-// backdrop-filter: blur(6px);
-// -webkit-backdrop-filter: blur(6px);
-// border: 0.8px solid rgba(255, 255, 255, 0.18);
-// border-radius: 21px;
-// -webkit-border-radius: 21px;
-// color: rgb(255, 255, 255);
-// transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 2.2);
-//   box-shadow: 0 6px 6px rgba(0, 0, 0, 0.2), 0 0 20px rgba(0, 0, 0, 0.1);
-// -webkit-box-shadow: 0 6px 6px rgba(0, 0, 0, 0.2), 0 0 20px rgba(0, 0, 0, 0.1);
-// }
 
 .left-sider {
   position: relative;

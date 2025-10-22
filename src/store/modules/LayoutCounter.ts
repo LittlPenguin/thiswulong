@@ -8,13 +8,13 @@ export const useLayoutStore = defineStore(
     // 侧边栏菜单选项数据
     const menuOptions = ref([
       {
-        label: "且听风吟",
-        key: "hear-the-wind-sing",
+        label: "首页",
+        key: "first",
         href: "/",
       },
       {
-        label: "1973年的弹珠玩具",
-        key: "pinball-1973",
+        label: "第二页",
+        key: "second",
         children: [
           {
             label: "鼠",
