@@ -28,6 +28,8 @@ export const lightTheme: GlobalThemeOverrides = {
     itemColorActiveCollapsed: "var(--menu-item-banner-light)",
     // 分组文字标题颜色
     groupTextColor: "var(--menu-white-light)",
+    // 字体大小
+    fontSize: "16px",
   },
   // 下拉菜单
   Dropdown: {
@@ -69,6 +71,8 @@ export const darkTheme: GlobalThemeOverrides = {
     itemColorActiveCollapsed: "var(--menu-item-banner-dark)",
     // 分组文字标题颜色
     groupTextColor: "var(--menu-white-dark)",
+    // 字体大小
+    fontSize: "16px",
   },
   // 下拉菜单
   Dropdown: {

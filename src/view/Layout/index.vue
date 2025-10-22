@@ -1,12 +1,13 @@
 <script setup lang="ts">
 // 导入vue基础
 import { h, ref, onMounted } from "vue";
-import { useRouter } from "vue-router";
+import { RouterLink, useRouter } from "vue-router";
 const router = useRouter();
 
 //ui库默认导入
 import type { MenuOption } from "naive-ui";
-import { BookmarkOutline, CaretDownOutline } from "@vicons/ionicons5";
+import { BookmarkOutline, CaretDownOutline, Link } from "@vicons/ionicons5";
+import { BrandGithub, Window } from "@vicons/tabler";
 import { NIcon } from "naive-ui";
 
 // 侧边栏是否折叠
@@ -71,6 +72,11 @@ onMounted(() => {
     leftsider.style.transform = "rotateX(0deg) rotateY(0deg)";
   });
 });
+
+//跳转github
+const goGithub = () => {
+  window.open("https://github.com/LittlPenguin");
+};
 </script>
 
 <template>
@@ -115,18 +121,36 @@ onMounted(() => {
               position="absolute"
               style="background: rgba(0, 0, 0, 0)"
             >
-              <n-switch
-                v-model:value="active"
-                @update:value="onUpdateTheme($event)"
-                size="large"
-                style="
-                  display: flex;
-                  justify-content: center;
-                  margin-bottom: 10px;
-                "
+              <n-flex
+                justify="space-around"
+                class="footer-container"
+                :wrap="false"
               >
-                <template #icon> 🤔 </template>
-              </n-switch>
+                <n-button
+                  v-show="!collapsed"
+                  :bordered="false"
+                  circle
+                  @click="goGithub()"
+                >
+                  <template #icon>
+                    <NIcon>
+                      <BrandGithub />
+                    </NIcon>
+                  </template>
+                </n-button>
+                <n-switch
+                  v-model:value="active"
+                  @update:value="onUpdateTheme($event)"
+                  size="large"
+                  style="
+                    display: flex;
+                    justify-content: center;
+                    margin-bottom: 10px;
+                  "
+                >
+                  <template #icon> 🤔 </template>
+                </n-switch>
+              </n-flex>
             </n-layout-footer>
           </n-layout-sider>
           <n-layout
@@ -177,5 +201,14 @@ onMounted(() => {
 
 .right-content {
   background-color: #ffffff00;
+}
+.footer-container {
+  background-color: rgba(0, 0, 0, 0);
+  & .n-button {
+    transition: all 0.3s ease-in-out;
+    &:hover {
+      transform: scale(1.3);
+    }
+  }
 }
 </style>
