@@ -7,8 +7,19 @@ const route = useRoute();
 
 //ui库默认导入
 import type { MenuOption } from "naive-ui";
-import { BookmarkOutline, CaretDownOutline } from "@vicons/ionicons5";
-import { BrandGithub, BrandGit } from "@vicons/tabler";
+import {
+  BookmarkOutline,
+  CaretDownOutline,
+  CheckmarkCircle,
+} from "@vicons/ionicons5";
+import {
+  BrandGithub,
+  BrandGit,
+  ArrowBigLeft,
+  ArrowBigRight,
+  Music,
+  Link,
+} from "@vicons/tabler";
 import { NIcon } from "naive-ui";
 
 // 导入store
@@ -106,7 +117,7 @@ const OnMenuChoice = (value: string) => {
           has-sider
           position="absolute"
           style="top: 0px; bottom: 0px"
-          class="container"
+          class="LayoutContainer"
         >
           <n-layout-sider
             content-class="content-class"
@@ -187,11 +198,76 @@ const OnMenuChoice = (value: string) => {
             </n-layout-footer>
           </n-layout-sider>
           <n-layout
-            content-style="padding: 24px;"
             class="right-content"
             :native-scrollbar="false"
+            style="background-color: transparent"
           >
-            <router-view></router-view>
+            <n-layout style="background-color: transparent">
+              <n-layout-header class="content-top">
+                <n-flex justify="space-between" style="height: 100%">
+                  <ul>
+                    <li>
+                      <n-button secondary strong class="apple-icon">
+                        <template #icon>
+                          <NIcon>
+                            <ArrowBigLeft />
+                          </NIcon>
+                        </template>
+                      </n-button>
+                    </li>
+                    <li>
+                      <n-button secondary strong class="apple-icon">
+                        <template #icon>
+                          <NIcon>
+                            <ArrowBigRight />
+                          </NIcon>
+                        </template>
+                      </n-button>
+                    </li>
+                    <li>
+                      <n-button secondary strong class="apple-icon">
+                        <template #icon>
+                          <NIcon>
+                            <Music />
+                          </NIcon>
+                        </template>
+                      </n-button>
+                    </li>
+                  </ul>
+                  <ul>
+                    <li>
+                      <n-button secondary strong class="apple-icon">
+                        <template #icon>
+                          <NIcon>
+                            <Link />
+                          </NIcon>
+                        </template>
+                      </n-button>
+                    </li>
+                    <li class="apple-icon">
+                      <n-ellipsis style="max-width: 240px">
+                        住在我心里孤独的 孤独的海怪 痛苦之王 开始厌倦 深海的光
+                        停滞的海浪
+                      </n-ellipsis>
+                    </li>
+                  </ul>
+                  <ul>
+                    <li>
+                      <n-tag round :bordered="false" type="success">
+                        IsOk
+                        <template #icon>
+                          <n-icon :component="CheckmarkCircle" />
+                        </template>
+                      </n-tag>
+                    </li>
+                  </ul>
+                </n-flex>
+              </n-layout-header>
+              <n-layout-content style="background-color: #e3e3e3">
+                <router-view></router-view>
+              </n-layout-content>
+              <n-layout-footer>成府路</n-layout-footer>
+            </n-layout>
           </n-layout>
         </n-layout>
       </n-layout>
@@ -200,7 +276,7 @@ const OnMenuChoice = (value: string) => {
 </template>
 
 <style scoped lang="scss">
-.container {
+.LayoutContainer {
   background: url("../../assets/moon.png") no-repeat;
   background-position: center center;
   background-size: cover;
@@ -221,7 +297,30 @@ const OnMenuChoice = (value: string) => {
 }
 
 .right-content {
-  background-color: #ffffff00;
+  margin: 5px;
+  border-radius: 5px;
+  & .content-top {
+    height: 30px;
+    background-color: #fff;
+    & ul {
+      list-style: none;
+      display: flex;
+      justify-content: center;
+      margin: 0;
+      padding: 0 10px;
+      & .apple-icon {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background-color: transparent;
+        transition: color 0.3s ease;
+        color: #898989;
+        &:hover {
+          color: #515151;
+        }
+      }
+    }
+  }
 }
 .footer-container {
   background-color: rgba(0, 0, 0, 0);
