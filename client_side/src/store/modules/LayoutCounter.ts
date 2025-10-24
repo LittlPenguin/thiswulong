@@ -23,10 +23,6 @@ export const useLayoutStore = defineStore(
         ],
       },
       {
-        label: "寻羊冒险记",
-        key: "a-wild-sheep-chase",
-      },
-      {
         label: "舞，舞，舞",
         key: "dance-dance-dance",
         children: [
