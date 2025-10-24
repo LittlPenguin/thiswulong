@@ -6,7 +6,6 @@ const router = useRouter();
 const route = useRoute();
 
 //ui库默认导入
-import type { MenuOption } from "naive-ui";
 import {
   BookmarkOutline,
   CaretDownOutline,
@@ -21,6 +20,8 @@ import {
   Link,
 } from "@vicons/tabler";
 import { NIcon } from "naive-ui";
+// 导入类型
+import type { MenuOption } from "naive-ui";
 
 // 导入store
 import { useLayoutStore, useUserCounter } from "../../store";
@@ -28,7 +29,12 @@ const Layoutstore = useLayoutStore();
 const Userstore = useUserCounter();
 
 //menu数据
-const menuOptions: MenuOption[] = Layoutstore.menuOptions;
+const menuOptions = ref<MenuOption[]>([]);
+onMounted(async () => {
+  menuOptions.value =
+    // 如果store中没有数据，才调用接口获取
+    Layoutstore.menuOptions || (await Layoutstore.getMenuOptions());
+});
 
 // 侧边栏是否折叠
 const collapsed = ref(true);

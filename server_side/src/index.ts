@@ -1,9 +1,13 @@
+// 导入必要的模块
 import express from "express";
 import mysql from "mysql2/promise";
+import cors from "cors";
+import type { MenuOption, newMenuOption } from "./types/GetMenuOptions";
 
 const app = express();
 const PORT = 4545;
 
+// 配置数据库
 const dbConfig = {
   host: "localhost",
   user: "root",
@@ -12,6 +16,16 @@ const dbConfig = {
   port: 3306,
 };
 
+// 配置请求数据
+app.use(
+  cors({
+    origin: "http://localhost:5173", // 明确指定允许的前端地址（推荐，更安全）
+    methods: ["GET", "POST", "PUT", "DELETE"], // 允许的请求方法
+    allowedHeaders: ["Content-Type"], // 允许的请求头
+  })
+);
+
+// 定义数据库查询函数
 async function queryDatabase(sql: string) {
   let connection;
   try {
@@ -31,14 +45,44 @@ async function queryDatabase(sql: string) {
   }
 }
 
+// 配置查询路由
 app.get("/menuoptions", async (req, res) => {
   try {
-    const sql = "select * from menuoptions";
+    // 构建查询SQL语句
+    const sql =
+      "SELECT `key`, `label`, `href`, `parent_key` FROM menuoptions ORDER BY `parent_key`, sort_order;";
     const data = await queryDatabase(sql);
+
+    const items = data as MenuOption[];
+    // 1. 建立映射表，同时移除parent_key并初始化children
+    const nodeMap: Record<string, newMenuOption> = {};
+    items.forEach((item) => {
+      // 解构排除parent_key，保留其他属性
+      const { parent_key, ...rest } = item;
+      nodeMap[item.key] = { ...rest, children: [] };
+    });
+
+    // 2. 关联父子关系（逻辑不变）
+    const treeData: newMenuOption[] = [];
+    items.forEach((item) => {
+      const currentNode = nodeMap[item.key];
+      if (item.parent_key) {
+        // 这里仍用item的parent_key判断父节点，但最终节点不包含该字段
+        const parentNode = nodeMap[item.parent_key];
+        if (parentNode) {
+          parentNode.children.push(currentNode);
+        } else {
+          treeData.push(currentNode);
+        }
+      } else {
+        treeData.push(currentNode);
+      }
+    });
+
     res.json({
       code: 200,
       message: "success",
-      data,
+      data: treeData,
     });
   } catch (error) {
     res.status(500).json({
