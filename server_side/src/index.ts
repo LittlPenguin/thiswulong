@@ -50,26 +50,41 @@ app.get("/menuoptions", async (req, res) => {
   try {
     // 构建查询SQL语句
     const sql =
-      "SELECT `key`, `label`, `href`, `parent_key` FROM menuoptions ORDER BY `parent_key`, sort_order;";
-    const data = await queryDatabase(sql);
+      "SELECT `key`, `label`, `href`, `parent_key`, `ticon` FROM menuoptions ORDER BY `parent_key`, sort_order;";
+    const data = (await queryDatabase(sql)) as MenuOption[];
 
-    const items = data as MenuOption[];
+    // 处理数据，将 null 字段删除
+    const newdata: MenuOption[] = data.map((obj) => {
+      // 复制原对象（避免直接修改原对象）
+      const newObj = { ...obj };
+      // 如果 ticon 是 null，就从新对象中删除 ticon 属性
+      if (newObj.ticon === null) {
+        delete newObj.ticon;
+      }
+      // 如果 href 是 null，就从新对象中删除 href 属性
+      if (newObj.href === null) {
+        delete newObj.href;
+      }
+      return newObj;
+    });
+
     // 1. 建立映射表，同时移除parent_key并初始化children
     const nodeMap: Record<string, newMenuOption> = {};
-    items.forEach((item) => {
+    newdata.forEach((item) => {
       // 解构排除parent_key，保留其他属性
       const { parent_key, ...rest } = item;
-      nodeMap[item.key] = { ...rest, children: [] };
+      nodeMap[item.key] = { ...rest };
     });
 
     // 2. 关联父子关系（逻辑不变）
     const treeData: newMenuOption[] = [];
-    items.forEach((item) => {
+    newdata.forEach((item) => {
       const currentNode = nodeMap[item.key];
       if (item.parent_key) {
         // 这里仍用item的parent_key判断父节点，但最终节点不包含该字段
         const parentNode = nodeMap[item.parent_key];
         if (parentNode) {
+          parentNode.children = parentNode.children || [];
           parentNode.children.push(currentNode);
         } else {
           treeData.push(currentNode);

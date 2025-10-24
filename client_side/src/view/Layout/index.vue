@@ -6,11 +6,7 @@ const router = useRouter();
 const route = useRoute();
 
 //ui库默认导入
-import {
-  BookmarkOutline,
-  CaretDownOutline,
-  CheckmarkCircle,
-} from "@vicons/ionicons5";
+import { BookmarkOutline, CheckmarkCircle } from "@vicons/ionicons5";
 import {
   BrandGithub,
   BrandGit,
@@ -62,17 +58,18 @@ function renderMenuLabel(option: MenuOption) {
 }
 
 //图标
-function renderMenuIcon(option: MenuOption) {
-  // 渲染图标占位符以保持缩进
-  if (option.key === "sheep-man") return true;
-  // 返回 falsy 值，不再渲染图标及占位符
-  if (option.key === "food") return null;
-  return h(NIcon, null, { default: () => h(BookmarkOutline) });
+import type { iconMap, tciontype } from "../../types/Layout";
+// 声明一个图标功能函数，用于渲染图标
+function renderMenuIcon(option: tciontype) {
+  const iconMap: iconMap = {
+    BookmarkOutline: BookmarkOutline,
+  };
+  // 判断是否存在图标选项，并且图标是否存在
+  if (option.ticon && iconMap[option.ticon]) {
+    const iconComponent = iconMap[option.ticon];
+    return h(NIcon, null, { default: () => h(iconComponent) });
+  }
 }
-function expandIcon() {
-  return h(NIcon, null, { default: () => h(CaretDownOutline) });
-}
-
 // 侧边栏旋转功能
 onMounted(() => {
   const leftsider = document.querySelector<HTMLDivElement>(".left-sider");
@@ -149,7 +146,6 @@ const OnMenuChoice = (value: string) => {
                   :options="menuOptions"
                   :render-label="renderMenuLabel"
                   :render-icon="renderMenuIcon"
-                  :expand-icon="expandIcon"
                   @update:value="OnMenuChoice($event)"
                   :value="defaultActiveKey"
                 />
