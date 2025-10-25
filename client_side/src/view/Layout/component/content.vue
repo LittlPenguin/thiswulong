@@ -1,15 +1,27 @@
 <script setup lang="ts">
 import { CheckmarkCircle } from "@vicons/ionicons5";
 import { ArrowBigLeft, ArrowBigRight, Music, Link } from "@vicons/tabler";
+import { ErrorOutlineRound } from "@vicons/material";
+
+import { onMounted, ref } from "vue";
+const show = ref(false);
+onMounted(() => {
+  show.value = true;
+});
 </script>
 
 <template>
-  <n-layout style="margin: 5px"  :native-scrollbar="false"  class="ContentLayout">
+  <n-layout style="margin: 5px" :native-scrollbar="false" class="ContentLayout">
     <div class="content-top">
       <n-flex justify="space-between" style="height: 100%">
         <ul>
           <li>
-            <n-button secondary strong class="apple-icon">
+            <n-button
+              secondary
+              strong
+              class="apple-icon"
+              @click="$router.go(-1)"
+            >
               <template #icon>
                 <NIcon>
                   <ArrowBigLeft />
@@ -18,7 +30,12 @@ import { ArrowBigLeft, ArrowBigRight, Music, Link } from "@vicons/tabler";
             </n-button>
           </li>
           <li>
-            <n-button secondary strong class="apple-icon">
+            <n-button
+              secondary
+              strong
+              class="apple-icon"
+              @click="$router.go(1)"
+            >
               <template #icon>
                 <NIcon>
                   <ArrowBigRight />
@@ -54,10 +71,16 @@ import { ArrowBigLeft, ArrowBigRight, Music, Link } from "@vicons/tabler";
         </ul>
         <ul>
           <li>
-            <n-tag round :bordered="false" type="success">
+            <n-tag v-if="show" round :bordered="false" type="success">
               IsOk
               <template #icon>
                 <n-icon :component="CheckmarkCircle" />
+              </template>
+            </n-tag>
+            <n-tag v-else round :bordered="false">
+              NoOk
+              <template #icon>
+                <n-icon :component="ErrorOutlineRound" />
               </template>
             </n-tag>
           </li>
@@ -69,6 +92,7 @@ import { ArrowBigLeft, ArrowBigRight, Music, Link } from "@vicons/tabler";
       class="ContentContainer"
       :native-scrollbar="false"
     >
+      <router-view></router-view>
     </n-layout>
   </n-layout>
 </template>

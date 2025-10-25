@@ -11,9 +11,7 @@ import MenuNav from "./component/MenuNav.vue";
 import Content from "./component/content.vue";
 
 // 导入图标组件
-
 import { lightTheme, darkTheme } from "../../utils/gloable";
-
 // 设置默认主题模式和修改主题模式
 const theme = ref(Userstore.themeActive ? darkTheme : lightTheme);
 const onTheme = (value: boolean) => {
