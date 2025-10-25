@@ -179,4 +179,26 @@ const OnMenuChoice = (value: string) => {
   </n-layout-sider>
 </template>
 
-<style scoped></style>
+<style scoped>
+.left-sider {
+  position: relative;
+  left: -5px;
+  transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 2.2);
+  background: #ffffff14;
+  margin: 4px 0;
+  border: 5px solid transparent;
+  box-shadow: 0 0 0 2px #ffffff99, 0 16px 32px #0000001f;
+  border-top-right-radius: 21px;
+  border-bottom-right-radius: 21px;
+  padding-left: 5px;
+}
+.footer-container {
+  background-color: rgba(0, 0, 0, 0);
+  & .n-button {
+    transition: all 0.3s ease-in-out;
+    &:hover {
+      transform: scale(1.3);
+    }
+  }
+}
+</style>
