@@ -38,7 +38,11 @@ onMounted(async () => {
 });
 
 // 侧边栏是否折叠数据
-const collapsed = ref(true);
+const collapsed = ref<boolean>(Userstore.collapsed);
+const onCollapsed = (value: boolean) => {
+  collapsed.value = value;
+  Userstore.setCollapsed(value);
+};
 
 // 侧边栏点击路由跳转
 function renderMenuLabel(option: MenuOption) {
@@ -117,8 +121,7 @@ const OnMenuChoice = (value: string) => {
     :width="230"
     show-trigger="bar"
     :collapsed="collapsed"
-    @collapse="collapsed = true"
-    @expand="collapsed = false"
+    @update:collapsed="onCollapsed($event)"
     class="left-sider"
   >
     <n-layout style="background-color: transparent">
