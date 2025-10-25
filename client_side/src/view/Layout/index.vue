@@ -1,114 +1,23 @@
 <script setup lang="ts">
-// 导入vue基础
-import { h, ref, onMounted } from "vue";
-import { useRouter, useRoute } from "vue-router";
-const router = useRouter();
-const route = useRoute();
+// 导入必要vue组件
+import { ref } from "vue";
 
-//ui库默认导入
-import { BookmarkOutline, CheckmarkCircle } from "@vicons/ionicons5";
-import {
-  BrandGithub,
-  BrandGit,
-  ArrowBigLeft,
-  ArrowBigRight,
-  Music,
-  Link,
-} from "@vicons/tabler";
-import { NIcon } from "naive-ui";
-// 导入类型
-import type { MenuOption } from "naive-ui";
-
-// 导入store
-import { useLayoutStore, useUserCounter } from "../../store";
-const Layoutstore = useLayoutStore();
+// 导入store模块
+import { useUserCounter } from "../../store";
 const Userstore = useUserCounter();
 
-//menu数据
-const menuOptions = ref<MenuOption[]>([]);
-onMounted(async () => {
-  menuOptions.value =
-    // 如果store中没有数据，才调用接口获取
-    Layoutstore.menuOptions || (await Layoutstore.getMenuOptions());
-});
+// 导入侧边栏组件
+import MenuNav from "./component/MenuNav.vue";
 
-// 侧边栏是否折叠
-const collapsed = ref(true);
-
-// 主题模式
+// 导入图标组件
+import { CheckmarkCircle } from "@vicons/ionicons5";
+import { ArrowBigLeft, ArrowBigRight, Music, Link } from "@vicons/tabler";
 import { lightTheme, darkTheme } from "../../utils/gloable";
-const active = ref(Userstore.themeActive || false);
-const theme = ref(active.value ? darkTheme : lightTheme);
-const onUpdateTheme = (value: boolean) => {
+
+// 设置默认主题模式和修改主题模式
+const theme = ref(Userstore.themeActive ? darkTheme : lightTheme);
+const onTheme = (value: boolean) => {
   theme.value = value ? darkTheme : lightTheme;
-  active.value = value;
-  Userstore.SetThemeActive(value);
-};
-
-// 路由跳转
-function renderMenuLabel(option: MenuOption) {
-  if ("href" in option) {
-    return h(
-      "a",
-      { onClick: () => router.push(option.href as string) },
-      option.label as string
-    );
-  }
-  return option.label as string;
-}
-
-//图标
-import type { iconMap, tciontype } from "../../types/Layout";
-// 声明一个图标功能函数，用于渲染图标
-function renderMenuIcon(option: tciontype) {
-  const iconMap: iconMap = {
-    BookmarkOutline: BookmarkOutline,
-  };
-  // 判断是否存在图标选项，并且图标是否存在
-  if (option.ticon && iconMap[option.ticon]) {
-    const iconComponent = iconMap[option.ticon];
-    return h(NIcon, null, { default: () => h(iconComponent) });
-  }
-}
-// 侧边栏旋转功能
-onMounted(() => {
-  const leftsider = document.querySelector<HTMLDivElement>(".left-sider");
-  // 鼠标移动时旋转侧边栏
-  leftsider?.addEventListener("mousemove", (e: MouseEvent) => {
-    const react = leftsider?.getBoundingClientRect();
-    const x = (e.clientX - react.left) / react.width;
-    const y = (e.clientY - react.top) / react.height;
-    const tiX = (x - 0.5) * 25;
-    const tiY = (y - 0.5) * 25;
-    // 添加可选链操作符，确保类型安全
-    leftsider.style.transform = `rotateX(${
-      tiY < 0 ? -tiX : tiX
-    }deg) rotateY(${tiY}deg)`;
-  });
-  // 鼠标离开时重置旋转角度
-  leftsider?.addEventListener("mouseleave", () => {
-    leftsider.style.transform = "rotateX(0deg) rotateY(0deg)";
-  });
-});
-
-//跳转github或gitee
-const goGithub = (type: string) => {
-  window.open(
-    type === "github"
-      ? "https://github.com/LittlPenguin"
-      : "https://gitee.com/colasheep"
-  );
-};
-
-// 菜单功能
-//配置默认选择项
-const defaultActiveKey = ref();
-if (route.path === "/") {
-  defaultActiveKey.value = "first";
-}
-// 侧边栏菜单选项选择
-const OnMenuChoice = (value: string) => {
-  defaultActiveKey.value = value;
 };
 </script>
 
@@ -122,83 +31,7 @@ const OnMenuChoice = (value: string) => {
           style="top: 0px; bottom: 0px"
           class="LayoutContainer"
         >
-          <n-layout-sider
-            content-class="content-class"
-            :native-scrollbar="false"
-            collapse-mode="width"
-            :collapsed-width="120"
-            :width="230"
-            show-trigger="bar"
-            :collapsed="collapsed"
-            @collapse="collapsed = true"
-            @expand="collapsed = false"
-            class="left-sider"
-          >
-            <n-layout style="background-color: transparent">
-              <n-layout-content
-                style="height: 650px; background-color: transparent"
-                :native-scrollbar="false"
-              >
-                <n-menu
-                  :collapsed="collapsed"
-                  :collapsed-width="64"
-                  :collapsed-icon-size="22"
-                  :options="menuOptions"
-                  :render-label="renderMenuLabel"
-                  :render-icon="renderMenuIcon"
-                  @update:value="OnMenuChoice($event)"
-                  :value="defaultActiveKey"
-                />
-              </n-layout-content>
-            </n-layout>
-            <n-layout-footer
-              position="absolute"
-              style="background: rgba(0, 0, 0, 0)"
-            >
-              <n-flex
-                justify="space-around"
-                class="footer-container"
-                :wrap="false"
-              >
-                <n-button
-                  v-show="!collapsed"
-                  :bordered="false"
-                  circle
-                  @click="goGithub('gitee')"
-                >
-                  <template #icon>
-                    <NIcon>
-                      <BrandGit />
-                    </NIcon>
-                  </template>
-                </n-button>
-                <n-button
-                  v-show="!collapsed"
-                  :bordered="false"
-                  circle
-                  @click="goGithub('github')"
-                >
-                  <template #icon>
-                    <NIcon>
-                      <BrandGithub />
-                    </NIcon>
-                  </template>
-                </n-button>
-                <n-switch
-                  v-model:value="active"
-                  @update:value="onUpdateTheme($event)"
-                  size="large"
-                  style="
-                    display: flex;
-                    justify-content: center;
-                    margin-bottom: 10px;
-                  "
-                >
-                  <template #icon> 🤔 </template>
-                </n-switch>
-              </n-flex>
-            </n-layout-footer>
-          </n-layout-sider>
+          <MenuNav @updatethemeActive="onTheme" />
           <n-layout
             class="right-content"
             :native-scrollbar="false"
