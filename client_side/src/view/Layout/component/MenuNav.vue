@@ -190,17 +190,17 @@ const OnMenuChoice = (value: string) => {
   background: #ffffff14;
   margin: 4px 0;
   border: 5px solid transparent;
-  box-shadow: 0 0 0 2px #ffffff99, 0 16px 32px #0000001f;
+  box-shadow: 0 0 0 2px #ffffff99, 0 16px 32px #1d17171f;
   border-top-right-radius: 21px;
   border-bottom-right-radius: 21px;
   padding-left: 5px;
-}
-.footer-container {
-  background-color: rgba(0, 0, 0, 0);
-  & .n-button {
-    transition: all 0.3s ease-in-out;
-    &:hover {
-      transform: scale(1.3);
+  & .footer-container {
+    background-color: rgba(0, 0, 0, 0);
+    & .n-button {
+      transition: all 0.3s ease-in-out;
+      &:hover {
+        transform: scale(1.3);
+      }
     }
   }
 }
