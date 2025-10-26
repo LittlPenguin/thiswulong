@@ -11,14 +11,19 @@ import {
   PauseCircleOutlineTwotone,
 } from "@vicons/material";
 
+import { useMusicStore } from "../../store/modules/MusicCounter";
+const musicStore = useMusicStore();
+
+// 导入音乐数据
+import { musicMap } from "../../utils/music";
 // 导入事件
-const emit = defineEmits(["handle"]);
+const emit = defineEmits(["handle", "changeMusic"]);
 const props = defineProps({
   PlayModel: Boolean,
 });
 
+// 判断是否在播放
 onMounted(() => {
-  // 判断是否在播放
   if (props.PlayModel) {
     PlayModel.value = true;
   } else {
@@ -26,6 +31,7 @@ onMounted(() => {
   }
 });
 
+// 定义播放状态
 const PlayModel = ref(false);
 const playSound = (value: boolean) => {
   PlayModel.value = value;
@@ -33,41 +39,47 @@ const playSound = (value: boolean) => {
 };
 
 // 定义进度条值
-const value = ref(0);
-const max = ref(0);
+const SoundSinglevalue = ref(0);
+const max = ref(100);
 const min = ref(0);
 
-var soundEX = ref(0);
-const go = (value: boolean) => {
+// 定义音量
+const soundVolume = ref(musicStore.soundVolume || 0);
+const soundEX = ref(0);
+const SoundGo = (value: boolean) => {
   if (value) {
     soundEX.value = 100;
   } else {
     soundEX.value = 0;
   }
 };
+// 处理音量变化
+const handleSound = (values: number) => {
+  soundVolume.value = values;
+  // 存入数据
+  musicStore.setSoundVol(values);
+};
 
-const options = [
-  {
-    label: "滨海湾金沙，新加坡",
-    key: "marina bay sands",
-    disabled: true,
-  },
-  {
-    label: "布朗酒店，伦敦",
-    key: "brown's hotel, london",
-  },
-  {
-    label: "亚特兰蒂斯巴哈马，拿骚",
-    key: "atlantis nahamas, nassau",
-  },
-  {
-    label: "比佛利山庄酒店，洛杉矶",
-    key: "the beverly hills hotel, los angeles",
-  },
-];
+// 标题
+const title = ref("");
+const SubTitle = ref("");
+onMounted(() => {
+  title.value = musicStore.musicList[0] || "无播放";
+  SubTitle.value = musicStore.musicList[1] || "无播放";
+  selectedMusic.value = musicStore.musicList[2] || "";
+});
 
-const handleSelect = (value) => {
-  console.log(value);
+// 定义选择音乐
+const selectedMusic = ref("");
+// 选择音乐事件
+const handelasdlajsld = (value: string) => {
+  selectedMusic.value = value;
+  title.value = selectedMusic.value?.split(" - ")[0]?.trim() || "无播放";
+  SubTitle.value = selectedMusic.value?.split(" - ")[1]?.trim() || "无播放";
+  // 播放状态
+  playSound(false);
+  // 存入数据
+  musicStore.setMusicList([title.value, SubTitle.value, selectedMusic.value]);
 };
 </script>
 <template>
@@ -76,10 +88,10 @@ const handleSelect = (value) => {
       <li class="header">
         <ul>
           <li class="MainTitle">
-            <n-marquee> 七里香 </n-marquee>
+            <n-marquee> {{ title }} </n-marquee>
           </li>
           <li class="SubTitle">
-            <n-ellipsis style="max-width: 100px"> 周杰伦 </n-ellipsis>
+            <n-ellipsis style="max-width: 100px"> {{ SubTitle }} </n-ellipsis>
           </li>
         </ul>
       </li>
@@ -89,7 +101,7 @@ const handleSelect = (value) => {
             <NIcon style="padding: 0 10px">
               <Music />
             </NIcon>
-            <n-slider v-model:value="value" :max="max" :min="min" />
+            <n-slider v-model:value="SoundSinglevalue" :max="max" :min="min" />
           </li>
           <li class="time">00:00/00:00</li>
         </ul>
@@ -97,17 +109,19 @@ const handleSelect = (value) => {
       <li class="footer">
         <ul>
           <li>
-            <n-dropdown
-              trigger="hover"
-              :options="options"
-              @select="handleSelect"
+            <n-popselect
+              v-model:value="selectedMusic"
+              :options="musicMap"
+              scrollable
+              size="small"
+              @update:value="handelasdlajsld"
             >
               <n-button :focusable="false" text style="font-size: 24px">
                 <n-icon>
                   <FormatListBulletedFilled />
                 </n-icon>
               </n-button>
-            </n-dropdown>
+            </n-popselect>
           </li>
           <li>
             <n-button :focusable="false" text style="font-size: 24px">
@@ -138,7 +152,7 @@ const handleSelect = (value) => {
               </n-icon>
             </n-button>
           </li>
-          <li @mouseenter="go(true)" @mouseleave="go(false)">
+          <li @mouseenter="SoundGo(true)" @mouseleave="SoundGo(false)">
             <n-button
               :focusable="false"
               text
@@ -149,11 +163,13 @@ const handleSelect = (value) => {
               </n-icon>
               <n-space>
                 <n-slider
+                  :default-value="soundVolume"
                   class="sound-slider"
                   :class="{ 'sound-slider-show': soundEX != 0 }"
                   :style="{
                     width: soundEX + 'px',
                   }"
+                  @update:value="handleSound"
                 />
               </n-space>
             </n-button>
