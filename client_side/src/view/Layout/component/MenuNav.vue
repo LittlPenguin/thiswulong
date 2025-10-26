@@ -8,7 +8,7 @@ const router = useRouter();
 const route = useRoute();
 
 // 导入store
-import { useLayoutStore, useUserCounter } from "../../../store";
+import { useLayoutStore, useUserCounter } from "@/store";
 const Layoutstore = useLayoutStore();
 const Userstore = useUserCounter();
 
@@ -57,9 +57,9 @@ function renderMenuLabel(option: MenuOption) {
 }
 
 //图标
-import { iconMap } from "../../../utils/icon";
+import { iconMap } from "@/utils/icon";
 // 导入图标类型
-import type { tciontype } from "../../../types/Layout";
+import type { tciontype } from "@/types/Layout";
 // 声明一个图标功能函数，用于渲染图标
 function renderMenuIcon(option: tciontype) {
   // 判断是否存在图标选项，并且图标是否存在

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 // 导入组件
-import MusicPlay from "../../../components/MusicPlay/index.vue";
+import MusicPlay from "@/components/MusicPlay/index.vue";
 // 导入ui组件库
 import { CheckmarkCircle } from "@vicons/ionicons5";
 import { ArrowBigLeft, ArrowBigRight, Music, Link } from "@vicons/tabler";

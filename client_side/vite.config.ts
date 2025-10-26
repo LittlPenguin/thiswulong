@@ -1,5 +1,6 @@
 import { defineConfig } from "vite";
 import vue from "@vitejs/plugin-vue";
+import path from "path";
 
 // 导入ui组件库
 import AutoImport from "unplugin-auto-import/vite";
@@ -28,4 +29,9 @@ export default defineConfig({
       resolvers: [NaiveUiResolver()],
     }),
   ],
+  resolve: {
+    alias: {
+      "@": path.resolve(__dirname, "src"), // 配置 @ 指向 src 目录
+    },
+  },
 });

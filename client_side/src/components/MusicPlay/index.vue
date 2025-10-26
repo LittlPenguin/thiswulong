@@ -11,11 +11,11 @@ import {
   PauseCircleOutlineTwotone,
 } from "@vicons/material";
 
-import { useMusicStore } from "../../store/modules/MusicCounter";
+import { useMusicStore } from "@/store/modules/MusicCounter";
 const musicStore = useMusicStore();
 
 // 导入音乐数据
-import { musicMap } from "../../utils/music";
+import { musicMap } from "@/utils/music";
 // 导入事件
 const emit = defineEmits(["handle", "changeMusic"]);
 const props = defineProps({
