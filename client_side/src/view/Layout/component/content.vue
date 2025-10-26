@@ -9,6 +9,20 @@ import { ErrorOutlineRound } from "@vicons/material";
 // 导入vue
 import { onMounted, ref } from "vue";
 
+// 音乐组件
+const audioRef = ref<HTMLAudioElement>();
+//音乐控制组件
+const musicPlayRef = ref(null);
+const PlayModel = ref(false);
+const musicHandle = (value: boolean) => {
+  PlayModel.value = value;
+  if (value) {
+    audioRef.value!.play();
+  } else {
+    audioRef.value!.pause();
+  }
+};
+
 // 加载
 const show = ref(false);
 onMounted(() => {
@@ -68,8 +82,18 @@ onMounted(() => {
                   </template>
                 </n-button>
               </template>
-              <MusicPlay />
+              <MusicPlay
+                :PlayModel="PlayModel"
+                ref="musicPlayRef"
+                @handle="musicHandle"
+              />
             </n-popover>
+            <audio style="display: none" controls ref="audioRef">
+              <source
+                src="../../../assets/music/王OK & 洪佩瑜 - 这条小鱼在乎.mp3"
+                type="audio/mpeg"
+              />
+            </audio>
           </li>
         </ul>
         <ul>

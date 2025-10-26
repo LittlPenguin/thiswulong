@@ -1,6 +1,7 @@
 <script setup lang="ts">
 // 导入vue
-import { ref } from "vue";
+import { ref, onMounted } from "vue";
+// 导入图标
 import { Music, BrandSoundcloud } from "@vicons/tabler";
 import {
   FormatListBulletedFilled,
@@ -10,7 +11,31 @@ import {
   PauseCircleOutlineTwotone,
 } from "@vicons/material";
 
-const value = ref(50);
+// 导入事件
+const emit = defineEmits(["handle"]);
+const props = defineProps({
+  PlayModel: Boolean,
+});
+
+onMounted(() => {
+  // 判断是否在播放
+  if (props.PlayModel) {
+    PlayModel.value = true;
+  } else {
+    PlayModel.value = false;
+  }
+});
+
+const PlayModel = ref(false);
+const playSound = (value: boolean) => {
+  PlayModel.value = value;
+  emit("handle", value);
+};
+
+// 定义进度条值
+const value = ref(0);
+const max = ref(0);
+const min = ref(0);
 </script>
 <template>
   <div class="MusicContainer">
@@ -18,7 +43,7 @@ const value = ref(50);
       <li class="header">
         <ul>
           <li class="MainTitle">
-            <n-marquee speed="40"> 七里香 </n-marquee>
+            <n-marquee> 七里香 </n-marquee>
           </li>
           <li class="SubTitle">
             <n-ellipsis style="max-width: 100px"> 周杰伦 </n-ellipsis>
@@ -31,7 +56,7 @@ const value = ref(50);
             <NIcon style="padding: 0 10px">
               <Music />
             </NIcon>
-            <n-slider v-model:value="value" />
+            <n-slider v-model:value="value" :max="max" :min="min" />
           </li>
           <li class="time">00:00/00:00</li>
         </ul>
@@ -53,11 +78,16 @@ const value = ref(50);
             </n-button>
           </li>
           <li>
-            <n-button :focusable="false" text style="font-size: 24px">
-              <n-icon v-show="true">
+            <n-button
+              :focusable="false"
+              text
+              style="font-size: 24px"
+              @click="playSound(!PlayModel)"
+            >
+              <n-icon v-show="!PlayModel">
                 <PlayArrowRound />
               </n-icon>
-              <n-icon v-show="false">
+              <n-icon v-show="PlayModel">
                 <PauseCircleOutlineTwotone />
               </n-icon>
             </n-button>
