@@ -1,6 +1,6 @@
 <script setup lang="ts">
 // 导入vue
-import { ref, onMounted } from "vue";
+import { ref, onMounted, watch } from "vue";
 // 导入图标
 import { Music, BrandSoundcloud } from "@vicons/tabler";
 import {
@@ -11,15 +11,29 @@ import {
   PauseCircleOutlineTwotone,
 } from "@vicons/material";
 
+// 导入音乐状态管理
 import { useMusicStore } from "@/store/modules/MusicCounter";
 const musicStore = useMusicStore();
 
 // 导入音乐数据
 import { musicMap } from "@/utils/music";
 // 导入事件
-const emit = defineEmits(["handle", "changeMusic"]);
+const emit = defineEmits(["handle", "changeMusic", "changeVolume"]);
+// 获取父传子属性
 const props = defineProps({
+  // 播放状态
   PlayModel: Boolean,
+  // 时间
+  maxTime: Number,
+  currentTime: Number,
+  // 进度条
+  SoundSinglevalue: Number,
+});
+
+// 初始化时间
+const maxTime = ref(0);
+onMounted(() => {
+  maxTime.value = props.maxTime || 0;
 });
 
 // 判断是否在播放
@@ -38,13 +52,9 @@ const playSound = (value: boolean) => {
   emit("handle", value);
 };
 
-// 定义进度条值
-const SoundSinglevalue = ref(0);
-const max = ref(100);
-const min = ref(0);
-
 // 定义音量
-const soundVolume = ref(musicStore.soundVolume || 0);
+const soundVolume = ref(musicStore.soundVolume || 50);
+//音量进度条显示
 const soundEX = ref(0);
 const SoundGo = (value: boolean) => {
   if (value) {
@@ -58,6 +68,7 @@ const handleSound = (values: number) => {
   soundVolume.value = values;
   // 存入数据
   musicStore.setSoundVol(values);
+  emit("changeVolume", values);
 };
 
 // 标题
@@ -81,6 +92,45 @@ const handelasdlajsld = (value: string) => {
   // 存入数据
   musicStore.setMusicList([title.value, SubTitle.value, selectedMusic.value]);
 };
+
+//进度条变化
+const formatTime = (seconds: number) => {
+  // 计算分钟（取整数部分）
+  const minutes = Math.floor(seconds / 60);
+  // 计算剩余秒数
+  const secs = seconds % 60;
+  // 补0处理：确保分钟和秒数都是两位数
+  const formattedMinutes = Math.ceil(minutes).toString().padStart(2, "0"); // 不足2位补0
+  const formattedSeconds = Math.ceil(secs).toString().padStart(2, "0");
+  return `${formattedMinutes}:${formattedSeconds}`;
+};
+
+// 定义进度条值
+const stop = ref(false);
+const SoundSinglevalue = ref(musicStore.musicTime);
+// 监听进度条变化
+const actionWatch = () => {
+  const stopWatch = watch(
+    () => props.SoundSinglevalue,
+    (newValue) => {
+      if (stop.value) {
+        stopWatch();
+        return;
+      }
+      SoundSinglevalue.value = newValue || 0;
+    }
+  );
+};
+// 处理进度条变化
+const handleSliderAction = () => {
+  stop.value = true;
+};
+const handleSliderChange = () => {
+  stop.value = false;
+  actionWatch();
+  emit("changeMusic", SoundSinglevalue.value);
+};
+actionWatch();
 </script>
 <template>
   <div class="MusicContainer">
@@ -101,9 +151,19 @@ const handelasdlajsld = (value: string) => {
             <NIcon style="padding: 0 10px">
               <Music />
             </NIcon>
-            <n-slider v-model:value="SoundSinglevalue" :max="max" :min="min" />
+            <n-slider
+              v-model:value="SoundSinglevalue"
+              :max="100"
+              :min="0"
+              @dragstart="handleSliderAction"
+              @dragend="handleSliderChange"
+            />
           </li>
-          <li class="time">00:00/00:00</li>
+          <li class="time">
+            {{ formatTime(props?.currentTime || 0) }}/{{
+              formatTime(props?.maxTime || 0)
+            }}
+          </li>
         </ul>
       </li>
       <li class="footer">

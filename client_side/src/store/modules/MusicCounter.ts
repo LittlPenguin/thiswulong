@@ -9,6 +9,8 @@ export const useMusicStore = defineStore(
     const soundVolume = ref(0);
     // 音乐数据
     const musicList = ref<string[]>([]);
+    // 设置音乐市场
+    const musicTime = ref(0);
 
     // 设置音乐数据
     const setMusicList = (value: string[]) => {
@@ -18,8 +20,19 @@ export const useMusicStore = defineStore(
     const setSoundVol = (value: number) => {
       soundVolume.value = value;
     };
+    // 设置音乐时间
+    const setMusicTime = (value: number) => {
+      musicTime.value = value;
+    };
     // 导出store数据
-    return { soundVolume, musicList, setMusicList, setSoundVol };
+    return {
+      soundVolume,
+      musicList,
+      musicTime,
+      setMusicList,
+      setSoundVol,
+      setMusicTime,
+    };
   },
   //持久化配置
   {

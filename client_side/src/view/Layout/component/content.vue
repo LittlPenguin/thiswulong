@@ -7,26 +7,71 @@ import { ArrowBigLeft, ArrowBigRight, Music, Link } from "@vicons/tabler";
 import { ErrorOutlineRound } from "@vicons/material";
 
 // 导入vue
-import { onMounted, ref } from "vue";
+import { onMounted, ref, watch } from "vue";
+
+//导入store
+import { useMusicStore } from "@/store";
+const musicStore = useMusicStore();
 
 // 音乐组件
 const audioRef = ref<HTMLAudioElement>();
 //音乐控制组件
 const musicPlayRef = ref(null);
 const PlayModel = ref(false);
+const timeMer = ref<number>(0);
+//音频进度条
+const maxTime = ref(audioRef.value?.duration);
+const currentTime = ref(0);
+// 组件渲染好后数据
+const getAudioDuration = () => {
+  maxTime.value = audioRef.value?.duration;
+  // 初始化音量 从数据中获取，如果没有则为1
+  audioRef.value!.volume = musicStore.soundVolume / 100 || 0.5;
+  // 初始化数据
+  audioRef.value!.currentTime = (musicStore.musicTime / 100) * maxTime.value!;
+  // 初始化当前时间
+  currentTime.value = (musicStore.musicTime / 100) * maxTime.value!;
+};
+
+// 处理音乐播放
 const musicHandle = (value: boolean) => {
   PlayModel.value = value;
+  maxTime.value = audioRef.value?.duration || 0;
+  currentTime.value = audioRef.value?.currentTime || 0;
   if (value) {
     audioRef.value!.play();
+    timeMer.value = setInterval(() => {
+      currentTime.value = audioRef.value?.currentTime || 0;
+    }, 500);
   } else {
     audioRef.value!.pause();
+    clearInterval(timeMer.value);
   }
+};
+// 修改音量
+const changeVolume = (value: number) => {
+  audioRef.value!.volume = value / 100;
+};
+
+// 进度条
+const SoundSinglevalue = ref(0);
+watch([currentTime, maxTime], (newValue) => {
+  SoundSinglevalue.value = Math.ceil((newValue[0] / newValue[1]!) * 100);
+  if (newValue[0] != 0) {
+    musicStore.setMusicTime(SoundSinglevalue.value);
+  }
+});
+// 更新进度条变化
+const changeMusic = (values: number) => {
+  audioRef.value!.currentTime = (values / 100) * maxTime.value!;
+  musicStore.setMusicTime(values);
+  currentTime.value = (values / 100) * maxTime.value!;
 };
 
 // 加载
-const show = ref(false);
+const show = ref(true);
 onMounted(() => {
-  show.value = true;
+  show.value = false;
 });
 </script>
 
@@ -86,9 +131,19 @@ onMounted(() => {
                 :PlayModel="PlayModel"
                 ref="musicPlayRef"
                 @handle="musicHandle"
+                @changeVolume="changeVolume"
+                :maxTime="maxTime"
+                :currentTime="currentTime"
+                :SoundSinglevalue="SoundSinglevalue"
+                @changeMusic="changeMusic"
               />
             </n-popover>
-            <audio style="display: none" controls ref="audioRef">
+            <audio
+              style="display: none"
+              controls
+              ref="audioRef"
+              @loadedmetadata="getAudioDuration"
+            >
               <source
                 src="../../../assets/music/王OK & 洪佩瑜 - 这条小鱼在乎.mp3"
                 type="audio/mpeg"
@@ -114,7 +169,7 @@ onMounted(() => {
         </ul>
         <ul>
           <li>
-            <n-tag v-if="show" round :bordered="false" type="success">
+            <n-tag v-if="!show" round :bordered="false" type="success">
               IsOk
               <template #icon>
                 <n-icon :component="CheckmarkCircle" />
