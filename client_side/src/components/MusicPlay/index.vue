@@ -18,7 +18,12 @@ const musicStore = useMusicStore();
 // 导入音乐数据
 import { musicMap } from "@/utils/music";
 // 导入事件
-const emit = defineEmits(["handle", "changeMusic", "changeVolume"]);
+const emit = defineEmits([
+  "handle",
+  "changeMusic",
+  "changeVolume",
+  "exChangeMusic",
+]);
 // 获取父传子属性
 const props = defineProps({
   // 播放状态
@@ -91,6 +96,7 @@ const handelasdlajsld = (value: string) => {
   playSound(false);
   // 存入数据
   musicStore.setMusicList([title.value, SubTitle.value, selectedMusic.value]);
+  emit("exChangeMusic", selectedMusic.value);
 };
 
 //进度条变化

@@ -68,6 +68,31 @@ const changeMusic = (values: number) => {
   currentTime.value = (values / 100) * maxTime.value!;
 };
 
+// 变更音乐
+import { musicMap } from "@/utils/music";
+const baseMusic = ref(
+  musicStore.musicList[2] ||
+    musicMap[Math.floor(Math.random() * (musicMap.length - 0 + 1)) + 0]
+);
+const onMusic = ref<string>(
+  new URL(
+    `../../../assets/music/${baseMusic.value!.value}.mp3`,
+    import.meta.url
+  ).href
+);
+musicStore.setMusicList([
+  baseMusic!.value!.value?.split(" - ")[0]?.trim(),
+  baseMusic!.value!.value?.split(" - ")[1]?.trim(),
+  baseMusic.value!.value,
+]);
+const exChangeMusic = (value: string) => {
+  onMusic.value = new URL(
+    `../../../assets/music/${value}.mp3`,
+    import.meta.url
+  ).href;
+  audioRef.value?.load();
+};
+
 // 加载
 const show = ref(true);
 onMounted(() => {
@@ -136,6 +161,7 @@ onMounted(() => {
                 :currentTime="currentTime"
                 :SoundSinglevalue="SoundSinglevalue"
                 @changeMusic="changeMusic"
+                @exChangeMusic="exChangeMusic"
               />
             </n-popover>
             <audio
@@ -144,10 +170,7 @@ onMounted(() => {
               ref="audioRef"
               @loadedmetadata="getAudioDuration"
             >
-              <source
-                src="../../../assets/music/王OK & 洪佩瑜 - 这条小鱼在乎.mp3"
-                type="audio/mpeg"
-              />
+              <source :src="onMusic" type="audio/mpeg" />
             </audio>
           </li>
         </ul>
