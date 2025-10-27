@@ -70,20 +70,26 @@ const changeMusic = (values: number) => {
 
 // 变更音乐
 import { musicMap } from "@/utils/music";
-const baseMusic = ref(
-  musicStore.musicList[2] ||
-    musicMap[Math.floor(Math.random() * (musicMap.length - 0 + 1)) + 0]
+const baseMusic = ref<{ value: string; author: string; label: string }>(
+  (musicStore.musicList?.[2] ||
+    musicMap[Math.floor(Math.random() * (musicMap.length - 0 + 1)) + 0]) as {
+    value: string;
+    author: string;
+    label: string;
+  }
 );
-const onMusic = ref<string>(
+const onMusic = ref(
   new URL(
     `../../../assets/music/${baseMusic.value!.value}.mp3`,
     import.meta.url
   ).href
 );
 musicStore.setMusicList([
-  baseMusic!.value!.value?.split(" - ")[0]?.trim(),
-  baseMusic!.value!.value?.split(" - ")[1]?.trim(),
-  baseMusic.value!.value,
+  {
+    value: baseMusic!.value!.value?.split(" - ")[0]?.trim() || "",
+    author: baseMusic!.value!.value?.split(" - ")[1]?.trim() || "",
+    label: baseMusic.value!.value,
+  },
 ]);
 const exChangeMusic = (value: string) => {
   onMusic.value = new URL(

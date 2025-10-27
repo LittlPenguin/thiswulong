@@ -8,12 +8,12 @@ export const useMusicStore = defineStore(
     // 音乐音量
     const soundVolume = ref(0);
     // 音乐数据
-    const musicList = ref<string[]>([]);
+    const musicList = ref<{ value: string; author: string; label: string }[]>();
     // 设置音乐市场
     const musicTime = ref(0);
 
     // 设置音乐数据
-    const setMusicList = (value: string[]) => {
+    const setMusicList = (value: { value: string; author: string; label: string }[]) => {
       musicList.value = value;
     };
     // 设置音量
