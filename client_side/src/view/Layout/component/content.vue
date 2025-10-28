@@ -13,9 +13,40 @@ import { onMounted, ref, watch } from "vue";
 import { useMusicStore } from "@/store";
 const musicStore = useMusicStore();
 
+// 初始化音乐
+// 播放列表
+const cdMusic = ref();
+// 当前音乐（数据）
+const baseMusic = ref<MusicListType>();
+// 播放音乐的数据（可识别路径）
+const onMusic = ref();
+onMounted(async () => {
+  //获取全部音乐列表
+  cdMusic.value = musicStore.theMusicList || (await musicStore.getMusicList());
+  //初始化播放音乐
+  baseMusic.value = (musicStore.musicList?.[0] ||
+    cdMusic.value[
+      Math.floor(Math.random() * (cdMusic.value.length - 0 + 1)) + 0
+    ]) as MusicListType;
+  // 转化为可识别路径
+  onMusic.value = new URL(
+    `../../../assets/music/${baseMusic.value!.value}.mp3`,
+    import.meta.url
+  ).href;
+  //上传数据
+  musicStore.setMusicList([
+    {
+      label: baseMusic!.value!.value?.split(" - ")[1]?.trim() || "",
+      author: baseMusic!.value!.value?.split(" - ")[0]?.trim() || "",
+      value: baseMusic.value!.value,
+    },
+  ]);
+  // ！！重新挂载组件
+  audioRef.value?.load();
+});
+
 //导入音乐数据类型
 import type { MusicListType } from "@/types/Music.d";
-
 // 音乐组件
 const audioRef = ref<HTMLAudioElement>();
 //音乐控制组件
@@ -72,27 +103,8 @@ const changeMusic = (values: number) => {
 };
 
 // 变更音乐
-import { musicMap } from "@/utils/music";
-const baseMusic = ref<MusicListType>(
-  (musicStore.musicList?.[2] ||
-    musicMap[
-      Math.floor(Math.random() * (musicMap.length - 0 + 1)) + 0
-    ]) as MusicListType
-);
-const onMusic = ref(
-  new URL(
-    `../../../assets/music/${baseMusic.value!.value}.mp3`,
-    import.meta.url
-  ).href
-);
-musicStore.setMusicList([
-  {
-    value: baseMusic!.value!.value?.split(" - ")[1]?.trim() || "",
-    author: baseMusic!.value!.value?.split(" - ")[0]?.trim() || "",
-    label: baseMusic.value!.value,
-  },
-]);
 const exChangeMusic = (value: string) => {
+  //变更转化为可识别音乐
   onMusic.value = new URL(
     `../../../assets/music/${value}.mp3`,
     import.meta.url

@@ -16,7 +16,7 @@ import { useMusicStore } from "@/store/modules/MusicCounter";
 const musicStore = useMusicStore();
 
 // 导入音乐数据
-import { musicMap } from "@/utils/music";
+const musicMap = ref(musicStore.theMusicList);
 // 导入事件
 const emit = defineEmits([
   "handle",
@@ -58,7 +58,7 @@ const playSound = (value: boolean) => {
 };
 
 // 定义音量
-const soundVolume = ref(musicStore.soundVolume || 50);
+const soundVolume = ref(musicStore.soundVolume || 30);
 //音量进度条显示
 const soundEX = ref(0);
 const SoundGo = (value: boolean) => {
@@ -90,8 +90,8 @@ const selectedMusic = ref("");
 // 选择音乐事件
 const handelasdlajsld = (value: string) => {
   selectedMusic.value = value;
-  title.value = selectedMusic.value?.split(" - ")[0]?.trim() || "无播放";
-  SubTitle.value = selectedMusic.value?.split(" - ")[1]?.trim() || "无播放";
+  title.value = selectedMusic.value?.split(" - ")[1]?.trim() || "无播放";
+  SubTitle.value = selectedMusic.value?.split(" - ")[0]?.trim() || "无播放";
   // 播放状态
   playSound(false);
   // 存入数据
@@ -99,7 +99,7 @@ const handelasdlajsld = (value: string) => {
     { label: title.value, author: SubTitle.value, value: selectedMusic.value },
   ]);
   emit("exChangeMusic", selectedMusic.value);
-
+  //切换音乐自动回到开头
   handleSliderAction();
   handleSliderChange(0);
 };

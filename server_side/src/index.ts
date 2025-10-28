@@ -106,6 +106,27 @@ app.get("/menuoptions", async (req, res) => {
     });
   }
 });
+
+// 配置查询音乐数据
+app.get("/musiclist", async (req, res) => {
+  try {
+    // 构建查询SQL语句
+    const sql = "SELECT * from music ORDER BY id;";
+    const data = await queryDatabase(sql);
+
+    res.json({
+      code: 200,
+      message: "success",
+      data: data,
+    });
+  } catch (error) {
+    res.status(500).json({
+      code: 500,
+      message: "error",
+    });
+  }
+});
+
 // 5. 处理跨域（如果前端和后端端口不同，必须配置）
 app.use((req, res, next) => {
   res.setHeader("Access-Control-Allow-Origin", "*"); // 允许所有源（生产环境需限制）

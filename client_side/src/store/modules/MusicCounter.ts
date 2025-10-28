@@ -1,6 +1,8 @@
 import { ref } from "vue";
 import { defineStore } from "pinia";
 
+//导入音乐数据
+import { getMusicListAPI } from "@/api/components/musicList";
 //导入音乐数据类型
 import type { MusicListType } from "@/types/Music.d";
 
@@ -9,13 +11,21 @@ export const useMusicStore = defineStore(
   "Music",
   () => {
     // 音乐音量
-    const soundVolume = ref(50);
+    const soundVolume = ref(30);
     // 音乐数据
     const musicList = ref<MusicListType[]>();
     // 设置音乐市场
     const musicTime = ref(0);
+    // 获取音乐基础数据
+    const theMusicList = ref<MusicListType[]>();
 
     // 设置音乐数据
+    // 获取音乐基础数据
+    const getMusicList = async () => {
+      const { data } = await getMusicListAPI();
+      theMusicList.value = data;
+      return data;
+    };
     const setMusicList = (value: MusicListType[]) => {
       musicList.value = value;
     };
@@ -32,6 +42,8 @@ export const useMusicStore = defineStore(
       soundVolume,
       musicList,
       musicTime,
+      theMusicList,
+      getMusicList,
       setMusicList,
       setSoundVol,
       setMusicTime,
