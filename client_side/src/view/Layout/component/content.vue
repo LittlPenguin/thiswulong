@@ -13,6 +13,9 @@ import { onMounted, ref, watch } from "vue";
 import { useMusicStore } from "@/store";
 const musicStore = useMusicStore();
 
+//导入音乐数据类型
+import type { MusicListType } from "@/types/Music.d";
+
 // 音乐组件
 const audioRef = ref<HTMLAudioElement>();
 //音乐控制组件
@@ -70,13 +73,11 @@ const changeMusic = (values: number) => {
 
 // 变更音乐
 import { musicMap } from "@/utils/music";
-const baseMusic = ref<{ value: string; author: string; label: string }>(
+const baseMusic = ref<MusicListType>(
   (musicStore.musicList?.[2] ||
-    musicMap[Math.floor(Math.random() * (musicMap.length - 0 + 1)) + 0]) as {
-    value: string;
-    author: string;
-    label: string;
-  }
+    musicMap[
+      Math.floor(Math.random() * (musicMap.length - 0 + 1)) + 0
+    ]) as MusicListType
 );
 const onMusic = ref(
   new URL(
