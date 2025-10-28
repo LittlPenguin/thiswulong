@@ -77,12 +77,12 @@ const handleSound = (values: number) => {
 };
 
 // 标题
-const title = ref("");
-const SubTitle = ref("");
+const title = ref<string>();
+const SubTitle = ref<string>();
 onMounted(() => {
-  title.value = musicStore.musicList[0] || "无播放";
-  SubTitle.value = musicStore.musicList[1] || "无播放";
-  selectedMusic.value = musicStore.musicList[2] || "";
+  title.value = musicStore.musicList?.[0]?.label || "无播放";
+  SubTitle.value = musicStore.musicList?.[0]?.author || "无播放";
+  selectedMusic.value = musicStore.musicList?.[0]?.value || "";
 });
 
 // 定义选择音乐
@@ -95,8 +95,13 @@ const handelasdlajsld = (value: string) => {
   // 播放状态
   playSound(false);
   // 存入数据
-  musicStore.setMusicList([title.value, SubTitle.value, selectedMusic.value]);
+  musicStore.setMusicList([
+    { label: title.value, author: SubTitle.value, value: selectedMusic.value },
+  ]);
   emit("exChangeMusic", selectedMusic.value);
+
+  handleSliderAction();
+  handleSliderChange(0);
 };
 
 //进度条变化
@@ -131,9 +136,12 @@ const actionWatch = () => {
 const handleSliderAction = () => {
   stop.value = true;
 };
-const handleSliderChange = () => {
+const handleSliderChange = (value: number) => {
   stop.value = false;
   actionWatch();
+  if (value == 0) {
+    SoundSinglevalue.value = value;
+  }
   emit("changeMusic", SoundSinglevalue.value);
 };
 actionWatch();

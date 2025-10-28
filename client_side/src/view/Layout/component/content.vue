@@ -86,8 +86,8 @@ const onMusic = ref(
 );
 musicStore.setMusicList([
   {
-    value: baseMusic!.value!.value?.split(" - ")[0]?.trim() || "",
-    author: baseMusic!.value!.value?.split(" - ")[1]?.trim() || "",
+    value: baseMusic!.value!.value?.split(" - ")[1]?.trim() || "",
+    author: baseMusic!.value!.value?.split(" - ")[0]?.trim() || "",
     label: baseMusic.value!.value,
   },
 ]);
