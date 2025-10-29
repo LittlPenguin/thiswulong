@@ -21,13 +21,44 @@ const baseMusic = ref<MusicListType>();
 // 播放音乐的数据（可识别路径）
 const onMusic = ref();
 onMounted(async () => {
+  randomMusic("ny");
+});
+
+// 当前位置的索引
+const num = ref(0);
+// 随机播放音乐
+const randomMusic = async (value: string) => {
   //获取全部音乐列表
   cdMusic.value = musicStore.theMusicList || (await musicStore.getMusicList());
   //初始化播放音乐
-  baseMusic.value = (musicStore.musicList?.[0] ||
-    cdMusic.value[
+  // 顺序播放
+  if (value === "gon") {
+    // 获取当前音乐位置索引
+    num.value =
+      cdMusic.value.indexOf(
+        cdMusic.value.find(
+          (item: MusicListType) =>
+            item.value === musicStore?.musicList?.[0]?.value
+        )
+      ) + 1;
+    // 处理索引超出范围
+    if (num.value >= cdMusic.value.length - 1) {
+      num.value = 0;
+    }
+    // 进行播放
+    baseMusic.value = cdMusic.value[num.value];
+    // 随机播放
+  } else if (value === "onRandom") {
+    baseMusic.value = cdMusic.value[
       Math.floor(Math.random() * (cdMusic.value.length - 0 + 1)) + 0
-    ]) as MusicListType;
+    ] as MusicListType;
+    // 单曲循环|| 默认播放已经存在的音乐，否则随机播放
+  } else {
+    baseMusic.value = (musicStore.musicList?.[0] ||
+      cdMusic.value[
+        Math.floor(Math.random() * (cdMusic.value.length - 0 + 1)) + 0
+      ]) as MusicListType;
+  }
   // 转化为可识别路径
   onMusic.value = new URL(
     `../../../assets/music/${baseMusic.value!.value}.mp3`,
@@ -43,7 +74,7 @@ onMounted(async () => {
   ]);
   // ！！重新挂载组件
   audioRef.value?.load();
-});
+};
 
 //导入音乐数据类型
 import type { MusicListType } from "@/types/Music.d";
@@ -68,14 +99,51 @@ const getAudioDuration = () => {
 };
 
 // 处理音乐播放
-const musicHandle = (value: boolean) => {
+const playImport = ref();
+const isLoding = ref(true);
+const musicHandle = async (value: boolean) => {
+  isLoding.value = !isLoding.value;
+  audioRef.value!.play();
   PlayModel.value = value;
-  maxTime.value = audioRef.value?.duration || 0;
-  currentTime.value = audioRef.value?.currentTime || 0;
   if (value) {
-    audioRef.value!.play();
-    timeMer.value = setInterval(() => {
+    // readyState 4代表可以播放
+    //若未加载完成则进入循环判断加载情况
+    if (audioRef.value?.readyState != 4) {
+      playImport.value = setInterval(() => {
+        //直到加载完成后，清除定时器，开始播放
+        if (audioRef.value?.readyState == 4) {
+          audioRef.value!.play();
+          clearInterval(playImport.value);
+          musicHandle(true);
+        }
+      }, 1000);
+      return;
+    }
+    // 清楚计时器以防出现问题
+    clearInterval(playImport.value);
+    clearInterval(timeMer.value);
+    // 开启监听播放
+    timeMer.value = setInterval(async () => {
       currentTime.value = audioRef.value?.currentTime || 0;
+      maxTime.value = audioRef.value?.duration || 0;
+      if (audioRef.value?.ended) {
+        // 结束
+        // 顺序播放
+        if (playMusicModel.value === 1) {
+          clearInterval(timeMer.value);
+          randomMusic("gon");
+          musicHandle(true);
+          return;
+          // 随机播放
+        } else if (playMusicModel.value === 2) {
+          clearInterval(timeMer.value);
+          randomMusic("onRandom");
+          musicHandle(true);
+          return;
+        }
+        // 单曲循环
+        musicHandle(true);
+      }
     }, 500);
   } else {
     audioRef.value!.pause();
@@ -110,6 +178,21 @@ const exChangeMusic = (value: string) => {
     import.meta.url
   ).href;
   audioRef.value?.load();
+};
+
+// 变更音乐快进退
+const changeValue = (type: string) => {
+  if (type == "add") {
+    audioRef.value!.currentTime += 3;
+  } else if (type == "sub") {
+    audioRef.value!.currentTime -= 3;
+  }
+};
+
+// 更改播放状态
+const playMusicModel = ref(0);
+const ChangemMusicPlayModel = (value: number) => {
+  playMusicModel.value = value;
 };
 
 // 加载
@@ -181,6 +264,10 @@ onMounted(() => {
                 :SoundSinglevalue="SoundSinglevalue"
                 @changeMusic="changeMusic"
                 @exChangeMusic="exChangeMusic"
+                @changeValue="changeValue"
+                @ChangemMusicPlayModel="ChangemMusicPlayModel"
+                :playMusicModel="playMusicModel"
+                :isLoding="isLoding"
               />
             </n-popover>
             <audio

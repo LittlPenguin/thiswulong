@@ -2,13 +2,16 @@
 // 导入vue
 import { ref, onMounted, watch } from "vue";
 // 导入图标
-import { Music, BrandSoundcloud } from "@vicons/tabler";
+import { Music, BrandSoundcloud, ArrowsShuffle2 } from "@vicons/tabler";
+//  AirOutlined顺序  material
+// ArrowsShuffle2随机 tabler
 import {
   FormatListBulletedFilled,
   KeyboardDoubleArrowLeftOutlined,
   PlayArrowRound,
   KeyboardDoubleArrowRightOutlined,
   PauseCircleOutlineTwotone,
+  AirOutlined,
 } from "@vicons/material";
 
 // 导入音乐状态管理
@@ -23,6 +26,8 @@ const emit = defineEmits([
   "changeMusic",
   "changeVolume",
   "exChangeMusic",
+  "changeValue",
+  "ChangemMusicPlayModel",
 ]);
 // 获取父传子属性
 const props = defineProps({
@@ -33,12 +38,16 @@ const props = defineProps({
   currentTime: Number,
   // 进度条
   SoundSinglevalue: Number,
+  // 播放模式
+  playMusicModel: Number,
+  isLoding: Boolean,
 });
 
 // 初始化时间
 const maxTime = ref(0);
 onMounted(() => {
   maxTime.value = props.maxTime || 0;
+  musicmodel.value = props.playMusicModel || 0;
 });
 
 // 判断是否在播放
@@ -84,6 +93,14 @@ onMounted(() => {
   SubTitle.value = musicStore.musicList?.[0]?.author || "无播放";
   selectedMusic.value = musicStore.musicList?.[0]?.value || "";
 });
+watch(
+  () => props.isLoding,
+  () => {
+    title.value = musicStore.musicList?.[0]?.label || "无播放";
+    SubTitle.value = musicStore.musicList?.[0]?.author || "无播放";
+    selectedMusic.value = musicStore.musicList?.[0]?.value || "";
+  }
+);
 
 // 定义选择音乐
 const selectedMusic = ref("");
@@ -145,6 +162,21 @@ const handleSliderChange = (value: number) => {
   emit("changeMusic", SoundSinglevalue.value);
 };
 actionWatch();
+
+// 音乐快进退
+const MusicChange = (type: string) => {
+  emit("changeValue", type);
+};
+
+// 改变音乐模式
+const musicmodel = ref(0);
+const changeMusicModel = () => {
+  musicmodel.value++;
+  if (musicmodel.value > 2) {
+    musicmodel.value = 0;
+  }
+  emit("ChangemMusicPlayModel", musicmodel.value);
+};
 </script>
 <template>
   <div class="MusicContainer">
@@ -162,9 +194,33 @@ actionWatch();
       <li class="content">
         <ul>
           <li style="display: flex">
-            <NIcon style="padding: 0 10px">
-              <Music />
-            </NIcon>
+            <div
+              class="cc"
+              style="width: 40px; position: relative"
+              @click="changeMusicModel"
+            >
+              <NIcon
+                class="active"
+                :class="musicmodel == 0 ? 'mr' : ''"
+                style="padding: 0 10px; cursor: pointer"
+              >
+                <Music />
+              </NIcon>
+              <NIcon
+                class="active"
+                :class="musicmodel == 1 ? 'mr' : ''"
+                style="padding: 0 10px; cursor: pointer"
+              >
+                <AirOutlined />
+              </NIcon>
+              <NIcon
+                class="active"
+                :class="musicmodel == 2 ? 'mr' : ''"
+                style="padding: 0 10px; cursor: pointer"
+              >
+                <ArrowsShuffle2 />
+              </NIcon>
+            </div>
             <n-slider
               v-model:value="SoundSinglevalue"
               :max="100"
@@ -198,7 +254,12 @@ actionWatch();
             </n-popselect>
           </li>
           <li>
-            <n-button :focusable="false" text style="font-size: 24px">
+            <n-button
+              :focusable="false"
+              text
+              style="font-size: 24px"
+              @click="MusicChange('sub')"
+            >
               <n-icon>
                 <KeyboardDoubleArrowLeftOutlined />
               </n-icon>
@@ -220,7 +281,12 @@ actionWatch();
             </n-button>
           </li>
           <li>
-            <n-button :focusable="false" text style="font-size: 24px">
+            <n-button
+              :focusable="false"
+              text
+              style="font-size: 24px"
+              @click="MusicChange('add')"
+            >
               <n-icon>
                 <KeyboardDoubleArrowRightOutlined />
               </n-icon>
@@ -278,11 +344,25 @@ actionWatch();
       text-align: center;
     }
     & .content {
+      & .active {
+        position: absolute;
+        left: 0;
+        top: 0;
+        transition: all 0.2s ease-in-out;
+        opacity: 0;
+        &.mr {
+          opacity: 1;
+        }
+      }
       ul {
         margin: 15px 0;
         & .time {
           font-size: 10px;
           color: #717171;
+          -webkit-user-select: none; /* Safari */
+          -moz-user-select: none; /* Firefox */
+          -ms-user-select: none; /* Internet Explorer/Edge */
+          user-select: none; /* 标准语法 */
         }
       }
     }
