@@ -190,7 +190,7 @@ const changeValue = (type: string) => {
 };
 
 // 更改播放状态
-const playMusicModel = ref(0);
+const playMusicModel = ref(musicStore.playMusicModel || 1);
 const ChangemMusicPlayModel = (value: number) => {
   playMusicModel.value = value;
 };

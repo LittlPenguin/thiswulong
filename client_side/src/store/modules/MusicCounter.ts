@@ -18,6 +18,8 @@ export const useMusicStore = defineStore(
     const musicTime = ref(0);
     // 获取音乐基础数据
     const theMusicList = ref<MusicListType[]>();
+    // 音乐播放模式
+    const playMusicModel = ref(1);
 
     // 设置音乐数据
     // 获取音乐基础数据
@@ -37,16 +39,22 @@ export const useMusicStore = defineStore(
     const setMusicTime = (value: number) => {
       musicTime.value = value;
     };
+    // 设置音乐播放模式
+    const setPlayMusicModel = (value: number) => {
+      playMusicModel.value = value;
+    };
     // 导出store数据
     return {
       soundVolume,
       musicList,
       musicTime,
       theMusicList,
+      playMusicModel,
       getMusicList,
       setMusicList,
       setSoundVol,
       setMusicTime,
+      setPlayMusicModel,
     };
   },
   //持久化配置

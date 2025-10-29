@@ -169,12 +169,16 @@ const MusicChange = (type: string) => {
 };
 
 // 改变音乐模式
-const musicmodel = ref(0);
+const musicmodel = ref(1);
+onMounted(() => {
+  musicmodel.value = props.playMusicModel || 1;
+});
 const changeMusicModel = () => {
   musicmodel.value++;
   if (musicmodel.value > 2) {
     musicmodel.value = 0;
   }
+  musicStore.setPlayMusicModel(musicmodel.value);
   emit("ChangemMusicPlayModel", musicmodel.value);
 };
 </script>
