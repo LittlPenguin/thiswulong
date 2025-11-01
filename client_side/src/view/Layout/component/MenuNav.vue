@@ -123,6 +123,9 @@ const OnMenuChoice = (value: string) => {
     :collapsed="collapsed"
     @update:collapsed="onCollapsed($event)"
     class="left-sider"
+    top="5px"
+    collapsed-trigger-style="right: -10px;"
+    trigger-style="right: -10px;"
   >
     <n-layout style="background-color: transparent">
       <n-layout-content
@@ -184,16 +187,19 @@ const OnMenuChoice = (value: string) => {
 
 <style scoped>
 .left-sider {
-  position: relative;
+  height: 98.6vh;
+  position: sticky;
+  top: 5px;
   left: -5px;
   transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 2.2);
   background: #ffffff14;
   margin: 4px 0;
   border: 5px solid transparent;
   box-shadow: 0 0 0 2px #ffffff99, 0 16px 32px #1d17171f;
-  border-top-right-radius: 21px;
-  border-bottom-right-radius: 21px;
+  border-top-right-radius: 10px;
+  border-bottom-right-radius: 10px;
   padding-left: 5px;
+
   & .footer-container {
     background-color: rgba(0, 0, 0, 0);
     & .n-button {
@@ -202,6 +208,9 @@ const OnMenuChoice = (value: string) => {
         transform: scale(1.3);
       }
     }
+  }
+  & .n-layout-toggle-bar {
+    right: 15px;
   }
 }
 </style>

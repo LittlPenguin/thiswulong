@@ -21,20 +21,13 @@ const onTheme = (value: boolean) => {
 
 <template>
   <n-config-provider :theme-overrides="theme">
-    <div style="height: 100vh; position: relative">
-      <n-layout position="absolute">
-        <n-layout
-          has-sider
-          position="absolute"
-          style="top: 0px; bottom: 0px"
-          class="LayoutContainer"
-        >
-          <!-- 侧边栏 -->
-          <MenuNav @updatethemeActive="onTheme" />
-          <!-- 内容 -->
-          <Content />
-        </n-layout>
-      </n-layout>
+    <div class="LayoutContainer">
+      <!-- 侧边栏 -->
+      <div class="left-aside">
+        <MenuNav @updatethemeActive="onTheme" />
+      </div>
+      <!-- 内容 -->
+      <Content @updatethemeActive="onTheme" />
     </div>
   </n-config-provider>
 </template>
@@ -45,5 +38,12 @@ const onTheme = (value: boolean) => {
   background-position: center center;
   background-size: cover;
   background-attachment: fixed;
+  display: flex;
+  min-height: 100vh;
+  & .left-aside {
+    position: sticky;
+    top: 0;
+    left: 0;
+  }
 }
 </style>

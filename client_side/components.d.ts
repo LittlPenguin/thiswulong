@@ -11,6 +11,7 @@ export {}
 /* prettier-ignore */
 declare module 'vue' {
   export interface GlobalComponents {
+    Mouse: typeof import('./src/components/mouse/mouse.vue')['default']
     MusicPlay: typeof import('./src/components/MusicPlay/index.vue')['default']
     NAlyout: typeof import('naive-ui')['NAlyout']
     NAvatar: typeof import('naive-ui')['NAvatar']
@@ -42,5 +43,6 @@ declare module 'vue' {
     NText: typeof import('naive-ui')['NText']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
+    Top: typeof import('./src/components/Top/index.vue')['default']
   }
 }
