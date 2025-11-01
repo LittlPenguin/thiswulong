@@ -117,7 +117,7 @@ const OnMenuChoice = (value: string) => {
     content-class="content-class"
     :native-scrollbar="false"
     collapse-mode="width"
-    :collapsed-width="120"
+    :collapsed-width="15"
     :width="230"
     show-trigger="bar"
     :collapsed="collapsed"
@@ -191,15 +191,15 @@ const OnMenuChoice = (value: string) => {
   position: sticky;
   top: 5px;
   left: -5px;
-  transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 2.2);
-  background: #ffffff14;
+  transition: all 1s cubic-bezier(0.175, 0.885, 0.32, 2.2);
+  background: #ffffff52;
   margin: 4px 0;
   border: 5px solid transparent;
   box-shadow: 0 0 0 2px #ffffff99, 0 16px 32px #1d17171f;
   border-top-right-radius: 10px;
   border-bottom-right-radius: 10px;
   padding-left: 5px;
-
+  z-index: 999999;
   & .footer-container {
     background-color: rgba(0, 0, 0, 0);
     & .n-button {

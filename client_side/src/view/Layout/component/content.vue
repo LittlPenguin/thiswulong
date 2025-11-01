@@ -4,7 +4,7 @@ import Top from "@/components/Top/index.vue";
 </script>
 
 <template>
-  <div style="margin: 0 5px" class="ContentLayout">
+  <div class="ContentLayout">
     <Top />
     <div style="background-color: #e3e3e3" class="ContentContainer">
       <router-view></router-view>

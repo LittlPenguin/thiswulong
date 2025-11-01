@@ -1,7 +1,10 @@
 <script setup lang="ts">
 // 导入必要vue组件
-import { ref } from "vue";
-
+import { onMounted, ref } from "vue";
+import { gsap } from "gsap";
+import { SplitText, ScrollTrigger, ScrollSmoother } from "gsap/all";
+// ScrollSmoother requires ScrollTrigger
+gsap.registerPlugin(SplitText, ScrollTrigger, ScrollSmoother);
 // 导入store模块
 import { useUserCounter } from "@/store";
 const Userstore = useUserCounter();
@@ -17,6 +20,13 @@ const theme = ref(Userstore.themeActive ? darkTheme : lightTheme);
 const onTheme = (value: boolean) => {
   theme.value = value ? darkTheme : lightTheme;
 };
+onMounted(() => {
+  ScrollSmoother.create({
+    smooth: 1.5, // how long (in seconds) it takes to "catch up" to the native scroll position
+    effects: true, // looks for data-speed and data-lag attributes on elements
+    smoothTouch: 0.1, // much shorter smoothing time on touch devices (default is NO smoothing on touch devices)
+  });
+});
 </script>
 
 <template>
@@ -27,23 +37,27 @@ const onTheme = (value: boolean) => {
         <MenuNav @updatethemeActive="onTheme" />
       </div>
       <!-- 内容 -->
-      <Content @updatethemeActive="onTheme" />
+      <div class="contentapp" style="width: 100%; margin: 1px 4px">
+        <div id="smooth-wrapper">
+          <div id="smooth-content">
+            <Content @updatethemeActive="onTheme" />
+          </div>
+        </div>
+        ;
+      </div>
     </div>
   </n-config-provider>
 </template>
 
 <style scoped lang="scss">
 .LayoutContainer {
-  background: url("../../assets/moon.png") no-repeat;
-  background-position: center center;
-  background-size: cover;
-  background-attachment: fixed;
   display: flex;
   min-height: 100vh;
   & .left-aside {
-    position: sticky;
+    position: fixed;
     top: 0;
     left: 0;
+    z-index: 1000;
   }
 }
 </style>

@@ -7,10 +7,14 @@
   "compilerOptions": {
     // ...
     "types": ["naive-ui/volar"],
-
     "paths": {
       "@/*": ["src/*"]
     },
-    "baseUrl": "."
+    "baseUrl": ".",
+    "lib": [
+      "ES2022", // 基础 ES 版本（至少 ES2022）
+      "ES2022.Intl", // 包含 Intl.Segmenter 等新 API 类型
+      "DOM" // 浏览器环境需要（Node.js 环境可省略）
+    ]
   }
 }

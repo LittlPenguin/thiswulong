@@ -1,10 +1,9 @@
 <script setup lang="ts">
 // 导入gasp
 import { gsap } from "gsap";
-import { SplitText } from "gsap/SplitText";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { SplitText, ScrollTrigger, ScrollSmoother } from "gsap/all";
 // ScrollSmoother requires ScrollTrigger
-gsap.registerPlugin(SplitText, ScrollTrigger);
+gsap.registerPlugin(SplitText, ScrollTrigger, ScrollSmoother);
 
 import { onMounted } from "vue";
 // 图片地址
@@ -52,7 +51,6 @@ onMounted(() => {
   gsap.to(".box", {
     scrollTrigger: {
       trigger: ".box",
-      start: "top center",
       toggleActions: "restart pause reverse pause",
     },
     x: 500,
@@ -81,6 +79,7 @@ onMounted(() => {
 .firstContent {
   height: 400vh;
   background-color: peachpuff;
+  position: relative;
   .first {
     width: 100%;
     height: 95vh;
@@ -111,6 +110,9 @@ onMounted(() => {
   & .box {
     width: 100px;
     height: 100px;
+    position: absolute;
+    top: 150vh;
+    left: 50px;
     background-color: palegreen;
   }
 }
