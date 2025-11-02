@@ -147,7 +147,6 @@ const OnMenuChoice = (value: string) => {
     <n-layout-footer position="absolute" style="background: rgba(0, 0, 0, 0)">
       <n-flex justify="space-around" class="footer-container" :wrap="false">
         <n-button
-          v-show="!collapsed"
           :focusable="false"
           :bordered="false"
           circle
@@ -160,7 +159,6 @@ const OnMenuChoice = (value: string) => {
           </template>
         </n-button>
         <n-button
-          v-show="!collapsed"
           :bordered="false"
           :focusable="false"
           circle
@@ -191,7 +189,7 @@ const OnMenuChoice = (value: string) => {
   position: sticky;
   top: 5px;
   left: -5px;
-  transition: all 1s cubic-bezier(0.175, 0.885, 0.32, 2.2);
+  transition: all 0.3s cubic-bezier(0.25, 0.1, 0.25, 1);
   background: #ffffff52;
   margin: 4px 0;
   border: 5px solid transparent;

@@ -7,7 +7,9 @@ gsap.registerPlugin(SplitText, ScrollTrigger, ScrollSmoother);
 
 import { onMounted } from "vue";
 // 图片地址
-import MyAvatar from "@/assets/my.jpg";
+import MyAvatar from "@/assets/my.jpeg";
+// 导入组件
+import LittleDown from "@/components/LittleDown/LittleDown.vue";
 
 // gasp动画
 onMounted(() => {
@@ -27,7 +29,7 @@ onMounted(() => {
   const segmenter = new Intl.Segmenter("zh", { granularity: "word" });
   document.fonts.ready.then(() => {
     gsap.set(".split", { opacity: 1 });
-    const split = SplitText.create(".split", {
+    SplitText.create(".split", {
       type: "words",
       wordsClass: "word",
       prepareText: (text) => {
@@ -48,14 +50,18 @@ onMounted(() => {
     });
   });
 
-  gsap.to(".box", {
+  gsap.to(".first", {
     scrollTrigger: {
-      trigger: ".box",
-      toggleActions: "restart pause reverse pause",
+      trigger: ".first",
+      start: "top -100px",
+      toggleActions: "restart none reverse none",
+      scrub: true,
     },
-    x: 500,
-    duration: 3,
-    rotation: 360,
+    x: 20,
+    y: -100,
+    width: "90%",
+    duration: 4,
+    // ease: "power1.out",
   });
 });
 </script>
@@ -66,21 +72,28 @@ onMounted(() => {
       <n-avatar class="avatar" lazy round :size="150" :src="MyAvatar" />
       <div class="actionPlay">
         <span class="split">
-          你好，这里是乌龙史莱姆大王的个人空间。欢迎你的到来！<br />
+          你好，这里是乌龙史莱姆大王的个人空间<br />欢迎你的到来<br />
           WelCome!
         </span>
       </div>
     </div>
-    <div class="box"></div>
+    <div class="second"></div>
+    <div class="footer">
+      <LittleDown />
+    </div>
   </div>
 </template>
 
 <style scoped lang="scss">
 .firstContent {
-  height: 400vh;
+  height: 300vh;
+  min-height: 150vh;
   background-color: peachpuff;
   position: relative;
+  display: flex;
+  justify-content: center;
   .first {
+    border-radius: 15px;
     width: 100%;
     height: 95vh;
     background-image: url("@/assets/abstract.png");
@@ -95,7 +108,8 @@ onMounted(() => {
     & .actionPlay {
       position: absolute;
       top: 0;
-      font-size: 3.5vw;
+      // right: 0;
+      font-size: 50px;
       padding: 30px 150px 0 50px;
       & span {
         user-select: none;
@@ -107,13 +121,16 @@ onMounted(() => {
       }
     }
   }
-  & .box {
-    width: 100px;
-    height: 100px;
+
+  // 第二区域
+  .second {
+  }
+  & .footer {
     position: absolute;
-    top: 150vh;
-    left: 50px;
-    background-color: palegreen;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 300px;
   }
 }
 </style>

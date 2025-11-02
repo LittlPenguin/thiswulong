@@ -289,7 +289,7 @@ onMounted(() => {
         </li>
       </ul>
       <ul>
-        <li>
+        <li style="display: flex; align-items: center">
           <n-tag v-if="!show" round :bordered="false" type="success">
             IsOk
             <template #icon>
