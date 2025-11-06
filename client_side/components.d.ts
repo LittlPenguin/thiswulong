@@ -11,7 +11,7 @@ export {}
 /* prettier-ignore */
 declare module 'vue' {
   export interface GlobalComponents {
-    LittleDown: typeof import('./src/components/LittleDown/LittleDown.vue')['default']
+    LittleDown: typeof import('./src/components/LittleDown/index.vue')['default']
     Mouse: typeof import('./src/components/mouse/mouse.vue')['default']
     MusicPlay: typeof import('./src/components/MusicPlay/index.vue')['default']
     NAlyout: typeof import('naive-ui')['NAlyout']

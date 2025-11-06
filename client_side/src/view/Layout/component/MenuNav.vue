@@ -129,8 +129,9 @@ const OnMenuChoice = (value: string) => {
   >
     <n-layout style="background-color: transparent">
       <n-layout-content
-        style="height: 650px; background-color: transparent"
+        style="height: 650px; background-color: transparent;margin-top: 20px;"
         :native-scrollbar="false"
+
       >
         <n-menu
           :collapsed="collapsed"
@@ -197,7 +198,7 @@ const OnMenuChoice = (value: string) => {
   border-top-right-radius: 10px;
   border-bottom-right-radius: 10px;
   padding-left: 5px;
-  z-index: 999999;
+  z-index: 999;
   & .footer-container {
     background-color: rgba(0, 0, 0, 0);
     & .n-button {

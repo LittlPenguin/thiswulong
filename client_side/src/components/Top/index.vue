@@ -13,6 +13,13 @@ import { onMounted, ref, watch } from "vue";
 import { useMusicStore } from "@/store";
 const musicStore = useMusicStore();
 
+const props = defineProps({
+  UpDown: {
+    type: Number,
+    default: 1,
+  },
+});
+
 // 初始化音乐
 // 播放列表
 const cdMusic = ref();
@@ -206,7 +213,10 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="content-top">
+  <div
+    class="content-top"
+    :style="`transform: translateY(-${props.UpDown * 100}px)`"
+  >
     <n-flex justify="space-between" style="height: 100%">
       <ul>
         <li>
@@ -310,10 +320,11 @@ onMounted(() => {
 
 <style scoped lang="scss">
 .content-top {
-  position: sticky;
+  transition: transform .7s ease-out;
+  position: fixed;
   top: 0px;
   width: 100%;
-  z-index: 999;
+  z-index: 9999;
   background-color: #ffffff;
   border-top-right-radius: 3px;
   border-top-left-radius: 3px;

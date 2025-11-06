@@ -2,9 +2,9 @@
 // 导入必要vue组件
 import { onMounted, ref } from "vue";
 import { gsap } from "gsap";
-import { SplitText, ScrollTrigger, ScrollSmoother } from "gsap/all";
+import { ScrollTrigger, ScrollSmoother } from "gsap/all";
 // ScrollSmoother requires ScrollTrigger
-gsap.registerPlugin(SplitText, ScrollTrigger, ScrollSmoother);
+gsap.registerPlugin(ScrollTrigger, ScrollSmoother);
 // 导入store模块
 import { useUserCounter } from "@/store";
 const Userstore = useUserCounter();
@@ -12,6 +12,8 @@ const Userstore = useUserCounter();
 // 导入侧边栏组件
 import MenuNav from "./component/MenuNav.vue";
 import Content from "./component/content.vue";
+// 导入顶部导航组件
+import Top from "@/components/Top/index.vue";
 
 // 导入图标组件
 import { lightTheme, darkTheme } from "@/utils/gloable";
@@ -21,12 +23,22 @@ const onTheme = (value: boolean) => {
   theme.value = value ? darkTheme : lightTheme;
 };
 onMounted(() => {
+  // 滚动平滑器
   ScrollSmoother.create({
     smooth: 2, // how long (in seconds) it takes to "catch up" to the native scroll position
     effects: true, // looks for data-speed and data-lag attributes on elements
     smoothTouch: 0.1, // much shorter smoothing time on touch devices (default is NO smoothing on touch devices)
   });
+  //滚动触发器
+  ScrollTrigger.create({
+    onUpdate: (self) => topHidorShow(self.direction),
+  });
 });
+const UpDown = ref(-1);
+
+const topHidorShow = (direction: number) => {
+  UpDown.value = direction;
+};
 </script>
 
 <template>
@@ -37,7 +49,9 @@ onMounted(() => {
         <MenuNav @updatethemeActive="onTheme" />
       </div>
       <!-- 内容 -->
-      <div class="contentapp" style="width: 100%; margin: 1px 4px">
+      <div class="contentapp" style="width: 100%">
+        <!--顶部导航-->
+        <Top :UpDown="UpDown" />
         <div id="smooth-wrapper">
           <div id="smooth-content">
             <Content @updatethemeActive="onTheme" />
