@@ -1,10 +1,10 @@
 <script setup lang="ts">
 // 导入gasp
 import { gsap } from "gsap";
-import { SplitText, ScrollTrigger, Draggable } from "gsap/all";
-gsap.registerPlugin(SplitText, ScrollTrigger, Draggable);
+import { SplitText, ScrollTrigger, Draggable, InertiaPlugin } from "gsap/all";
+gsap.registerPlugin(SplitText, ScrollTrigger, Draggable, InertiaPlugin);
 
-import { onMounted } from "vue";
+import { onMounted, ref } from "vue";
 // 图片地址
 import MyAvatar from "@/assets/images/my.jpeg";
 // 导入组件
@@ -62,7 +62,7 @@ onMounted(() => {
       // 根据滚动平滑滚动回退
       scrub: true,
     },
-    x: 20,
+    x: 30,
     y: -100,
     width: "90%",
     duration: 4,
@@ -72,16 +72,105 @@ onMounted(() => {
 
 // gsap动画第二页
 onMounted(() => {
-  Draggable.create(".reverse .item", {
-    onClick: () => {
-      gsap.to(".reverse .item", {
-        rotationY: -180,
-        duration: 2,
-        ease: "power1.out",
-      });
-    },
+  const items = document.querySelectorAll(".ItemPotato");
+  // 转换为数组并遍历对图片进行拖拽
+  Array.from(items).forEach((item) => {
+    Draggable.create(item, {
+      type: "x",
+      // trigger: ".banner",
+      liveSnap: {
+        x: function (value) {
+          return value / 99999;
+        },
+      },
+      onDrag: function () {
+        if (this.getDirection("velocity") == "left") {
+          this.disable();
+          gsap.to(item, {
+            rotateY: -180,
+            duration: 1,
+            ease: "power1.out",
+            onComplete: () => {
+              this.enable();
+            },
+          });
+        } else {
+          this.disable();
+          gsap.to(item, {
+            rotateY: 0,
+            duration: 1,
+            ease: "power1.out",
+            onComplete: () => {
+              this.enable();
+            },
+          });
+        }
+      },
+    });
+  });
+
+  gsap.from(".bannerItemLeft,.bannerItemRight", {
+    scrollTrigger: {
+      trigger: ".banner",
+      toggleActions: "restart none reverse none",
+      scrub: true,
+    }, // start animation when ".box" enters the viewport
+    y: 200,
+    duration: 0.31,
+  });
+  gsap.from(".BannerItemMain", {
+    scrollTrigger: {
+      trigger: ".banner",
+      toggleActions: "restart none reverse none",
+      scrub: true,
+    }, // start animation when ".box" enters the viewport
+    y: 100,
+    duration: 0.3,
   });
 });
+const source = ref([
+  {
+    src: new URL("@/assets/images/CatFish.jpg", import.meta.url).href,
+    name: "猫咪与鱼",
+  },
+  {
+    src: new URL("@/assets/images/coffee.png", import.meta.url).href,
+    name: "咖啡",
+  },
+  {
+    src: new URL("@/assets/images/DancePeople.jpg", import.meta.url).href,
+    name: "跳舞的人",
+  },
+  {
+    src: new URL("@/assets/images/Dog.jpg", import.meta.url).href,
+    name: "小狗",
+  },
+  {
+    src: new URL("@/assets/images/GrassDog.jpg", import.meta.url).href,
+    name: "草地狗",
+  },
+  {
+    src: new URL("@/assets/images/FishMan.jpg", import.meta.url).href,
+    name: "鱼人",
+  },
+  {
+    src: new URL("@/assets/images/Mountain.jpg", import.meta.url).href,
+    name: "山景",
+  },
+]);
+
+import type { NotificationType } from "naive-ui";
+import { useNotification } from "naive-ui";
+const notification = useNotification();
+
+function notify(type: NotificationType) {
+  notification[type]({
+    content: "说点啥呢",
+    meta: "想不出来",
+    duration: 2500,
+    keepAliveOnHover: true,
+  });
+}
 </script>
 
 <template>
@@ -98,6 +187,11 @@ onMounted(() => {
       </div>
     </div>
     <div class="second">
+      <span class="header"
+        >这是一些好看的图片
+        <span class="span" @click="notify('warning')">#</span></span
+      >
+
       <div class="banner">
         <ul class="bannerItemLeft">
           <li style="height: 100%; left: 0px">
@@ -113,7 +207,7 @@ onMounted(() => {
             <img src="@/assets/images/SnowCat.jpg" alt="" />
           </li>
         </ul>
-        <ul class="BannerItemMain">
+        <ul class="BannerItemMain" style="z-index: 99999">
           <li
             style="
               left: -45%;
@@ -132,8 +226,8 @@ onMounted(() => {
               border-bottom-left-radius: 0;
             "
           >
-            <div class="item">
-              <img src="@/assets/images/CatFish.jpg" alt="" />
+            <div class="ItemPotato" v-for="item in source" :key="item.name">
+              <img :src="item.src" alt="" />
             </div>
           </li>
           <li
@@ -219,11 +313,26 @@ ul {
   & .second {
     width: 100%;
     height: 600px;
-    margin-top: 200px;
+    margin-top: 300px;
+    & .header {
+      font-size: 50px;
+      padding: 0 0 0 50px;
+      color: #764a17;
+      font-weight: 800;
+      & .span {
+        display: inline-block;
+        transition: color 0.5s ease-in-out;
+        cursor: pointer;
+        &:hover {
+          color: #787878;
+        }
+      }
+    }
     & .banner {
       width: 100%;
       height: 100%;
       display: flex;
+      user-select: none;
       & ul {
         display: flex;
         height: 100%;
@@ -245,6 +354,16 @@ ul {
           & img {
             width: 100%;
             height: 100%;
+            -webkit-user-drag: none;
+            user-select: none;
+            cursor: grab;
+            -khtml-user-drag: none;
+            -moz-user-drag: none;
+            -o-user-drag: none;
+            user-drag: none;
+          }
+          & img:active {
+            cursor: grabbing;
           }
         }
       }
@@ -262,7 +381,7 @@ ul {
           transform-style: preserve-3d;
           perspective: 3000px;
           position: relative;
-          & .item {
+          & .ItemPotato {
             box-sizing: content-box;
             transform-origin: left;
             width: 100%;
@@ -275,6 +394,9 @@ ul {
             border-left: 0;
             border-top-left-radius: 0;
             border-bottom-left-radius: 0;
+            &.active {
+              z-index: 99;
+            }
           }
         }
         & li {
