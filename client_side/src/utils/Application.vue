@@ -18,7 +18,7 @@
 <script lang="ts" setup>
 import { MessageContent } from "./Message";
 import { DialogContent } from "./Dialog";
-import { LoadingBarContent } from "./Loadingbar";
+import { LoadingBarContent } from "./Loadingbar/index.ts";
 import {
   NConfigProvider,
   NDialogProvider,

@@ -72,6 +72,7 @@ onMounted(() => {
 
 // gsap动画第二页
 onMounted(() => {
+  // 图片拖拽
   const items = document.querySelectorAll(".ItemPotato");
   // 转换为数组并遍历对图片进行拖拽
   Array.from(items).forEach((item) => {
@@ -109,6 +110,7 @@ onMounted(() => {
     });
   });
 
+  // 图片滚动动画
   gsap.from(".bannerItemLeft,.bannerItemRight", {
     scrollTrigger: {
       trigger: ".banner",
@@ -127,7 +129,20 @@ onMounted(() => {
     y: 100,
     duration: 0.3,
   });
+
+  // 图片移动动画
+  const banner = document.querySelector(".banner");
+  banner!.addEventListener("mousemove", (e: Event) => {
+    const mouseEvent = e as MouseEvent;
+    gsap.to(".banner", {
+      x: mouseEvent.x / 150,
+      y: mouseEvent.y / 150,
+      duration: 0.6,
+      ease: "power1.out",
+    });
+  });
 });
+// 图片数据
 const source = ref([
   {
     src: new URL("@/assets/images/CatFish.jpg", import.meta.url).href,
@@ -159,6 +174,7 @@ const source = ref([
   },
 ]);
 
+// 一些第二页的效果动画
 import type { NotificationType } from "naive-ui";
 import { useNotification } from "naive-ui";
 const notification = useNotification();
